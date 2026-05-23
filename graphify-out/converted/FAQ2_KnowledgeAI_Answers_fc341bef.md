@@ -1,0 +1,253 @@
+<!-- converted from FAQ2_KnowledgeAI_Answers.xlsx -->
+
+## Sheet: Sheet1
+| Sr No | Question | KnowledgeAI Answer |
+| --- | --- | --- |
+|  | 🔹 Parent Communication & Scope |  |
+| 1 | What should a parent do if they email the support address with a general school-related question? | The provided context does not contain specific instructions on what a parent should do if they email the support address with a general school-related question. The documents focus on the registration process for students using the UniqueSchools app, including downloading the app, verifying registration through a parent's mobile number, and updating email information. However, there is no mention of handling general school-related inquiries via email. Therefore, I don't have enough information to answer this question based on the provided context. [How To Download & register_STUDENTS_Slim_v3.pdf; How To Download, register, assign swipe card_STUDENTS_Slim_v3.pdf; How To Update Email_Slim.pdf] |
+| 2 | How can parents contact the school directly instead of using the support email? | The provided context does not specify a direct method for parents to contact the school directly outside of using the support email (support@uniqueschools.ie). However, parents can engage with the school through the US School App, which serves as the official communication platform. This app allows parents to receive notifications, submit forms, and access school information, which may include direct contact details for school administration. To ensure they receive all communications, parents should:
+
+- Download the US School App from the App Store or Google Play.
+- Register using their mobile number provided to the school.
+- Turn on notifications to receive alerts and important updates.
+
+For direct communication, parents might consider using the app's features like private messaging or checking the app for any listed contact details. If further direct contact methods are needed, parents may need to inquire through the app or the support email for specific contact information. [GENERIC_Parents App Presentation_Mar_24.pdf] |
+|  | 🔹 Attendance Queries |  |
+| 3 | Can attendance-related notes (absence, late, permission to leave) be submitted via the support email? | Attendance-related notes such as absence, late, and permission to leave cannot be directly submitted via the support email. Instead, these notes are managed through specific forms and processes:
+
+- **Absence Notes**: When a student is marked absent and no prior note is submitted, parents receive an Absence Request Form to provide a reason for the absence. This form is managed within the attendance system, not through email [Attendance Form Management - Please Check (1).pdf].
+
+- **Late and Permission to Leave Notes**: These are submitted by parents through digital forms available in the Parent App. Parents must submit a Permission to Leave Early form for prior approval, and students arriving late or leaving early must sign in/out at reception [GENERIC_Parents App Presentation_Mar_24.pdf].
+
+The support email is provided for assistance with using features or changing responsibilities related to attendance management, not for submitting attendance-related notes [Attendance Form Management - Please Check (1).pdf]. |
+| 4 | What is the correct way to submit attendance-related notes? | To submit attendance-related notes correctly, follow these steps:
+
+- **Absence Notes**: If a student is marked absent and no prior note was submitted, parents/guardians will receive an Absence Request Form. They should use this form to submit a reason for the student's absence. This form can be accessed through the school's system, and once submitted, it will be managed and input into the attendance system by the school staff [Attendance Form Management - Please Check (1).pdf].
+
+- **Permission to Leave Early**: Parents/guardians must submit a Permission to Leave Early form for prior approval if a student needs to leave school early. This form should be submitted through the school's app, where a full history of submitted forms is available [GENERIC_Parents App Presentation_Mar_24.pdf].
+
+- **Digital Sign In/Out**: Students arriving late or leaving early must sign in or out at the reception. This ensures that the attendance records are accurate and up-to-date [GENERIC_Parents App Presentation_Mar_24.pdf].
+
+- **Parent Note Module**: Selected staff members will receive email alerts if a parent selects their name from the Parent Note module. This ensures that the relevant staff are informed about the submitted notes [How To Year Head Settings.pdf].
+
+These processes ensure that attendance records are maintained accurately and that any necessary permissions are documented properly. [Attendance Form Management - Please Check (1).pdf; GENERIC_Parents App Presentation_Mar_24.pdf; How To Year Head Settings.pdf]. |
+|  | 🔹 VSware / Tyro Access Issues |  |
+| 5 | What should a user do if their VSware username is not auto-filled in the app? | If a user's VSware username is not auto-filled in the app, they should follow these steps:
+
+- **Check Username Visibility**: If the username is not visible, the user should email support at support@uniqueschools.ie for assistance [How To Access VSware_Slim_V5.pdf].
+- **Manage Autofill Settings**: If the username was previously saved but is not auto-filling, the user can tap on "Tap here to manage autofill settings" within the app to re-enter and save their username and password for future seamless entry [How To Access VSware_Slim_V5.pdf].
+- **Access Help**: If further assistance is needed, the user can click on the green button for VSware Help or choose to email support for additional help [How To Access VSware_Slim_V5.pdf].
+
+These steps should help ensure that the username is correctly saved and auto-filled in the app. |
+| 6 | How can a user reset their VSware password from within the app? | To reset a VSware password from within the app, follow these steps:
+
+1. **Access the App**: Open the Homescreen on your App and tap on VSware.
+2. **Initiate Password Reset**:
+   - If your Username is visible but your Password is not, or you don’t remember your Password, click on "Create or Reset Password."
+3. **Enter Required Information**:
+   - Input your Username (you can copy the pre-populated Username from the first screen).
+   - Enter the last four digits of your Mobile Number and press "Send Code."
+4. **Verify and Change Password**:
+   - Input the code received via SMS to your mobile.
+   - Enter your new Password and click "Change Password."
+5. **Save Credentials**:
+   - Tap on "Tap here to manage autofill settings."
+   - Enter your Username and Password for each of your students and save them.
+   - Next time you access the app, the Username and Password will be auto-populated for seamless entry to VSware.
+
+If you encounter any issues during this process, you can click on the Green Button for VSware Help or email support for further assistance [How To Access VSware_Slim_V5.pdf]. |
+| 7 | What should a user do if they do not have a Tyro username? | The provided context does not mention anything about a Tyro username or what to do if a user does not have one. The documents focus on accessing VSware and registering for a school app through UniqueSchools, involving steps like entering a parent's mobile number for verification and setting up a password. For issues related to usernames, the guidance is specific to VSware, where users are advised to email support if their username is not visible. However, there is no mention of Tyro or related instructions. Therefore, I don't have enough information to answer the question regarding a Tyro username. [How To Access VSware_Slim_V5.pdf; How To Download, register, assign swipe card_STUDENTS_Slim_v3.pdf; How To Download & register_STUDENTS_Slim_v3.pdf] |
+| 8 | How can a user resolve a locked VSware account? | To resolve a locked VSware account, a user can follow these steps:
+
+1. **Check Login Credentials**: Ensure that the Username and Password are correctly entered. If the Username is not visible, contact support at support@uniqueschools.ie [How To Access VSware_Slim_V5.pdf].
+
+2. **Reset Password**: 
+   - If the Username is visible but the Password is not, or if the Password is forgotten, click on "Create or Reset Password."
+   - Input the Username and the last four digits of your mobile number, then press "Send Code."
+   - Enter the code received via SMS and set a new Password [How To Access VSware_Slim_V5.pdf].
+
+3. **Use VSware Help**: 
+   - Tap the VSware Help icon in the app.
+   - If unable to log in, click ‘No’ to indicate the issue, which will show a RED dot, prompting the Unique Schools team to assist you [How To Use VSware Help_Slim_V1.pdf].
+
+4. **Contact Support**: 
+   - If issues persist after following the Help Guide, click ‘Email Support’ to describe the issue and send it to App Support for further assistance [How To Use VSware Help_Slim_V1.pdf].
+
+By following these steps, users can address common issues related to a locked VSware account. [How To Access VSware_Slim_V5.pdf; How To Use VSware Help_Slim_V1.pdf]. |
+| 9 | What should a user do if they do not receive a VSware OTP verification code? | If a user does not receive a VSware OTP verification code, they should:
+
+- Wait for a short period, as there might be a delay in receiving the code.
+- Ensure that the correct mobile number, including the country code, is entered. The mobile number should be the one provided to the school for communication purposes.
+- If the code still does not arrive, they may need to contact support for further assistance. This can be done by emailing support@uniqueschools.ie for help with the issue [How To Access VSware_Slim_V5.pdf; How To Download & register_STUDENTS_Slim_v3.pdf; How To Download, register, assign swipe card_STUDENTS_Slim_v3.pdf]. |
+| 10 | How can a user fix a blank screen issue in VSware? | To address a blank screen issue in VSware, users can follow these steps:
+
+1. **Check Login Credentials**:
+   - Ensure that the Username and Password are correctly entered. If previously saved, they should auto-populate. If not, manually enter them and try logging in again.
+
+2. **Reset Password**:
+   - If the Username is visible but the Password is not, or if the Password is forgotten, click on "Create or Reset Password".
+   - Enter the Username and the last four digits of the mobile number, then press "Send Code".
+   - Input the code received via SMS, set a new Password, and click "Change Password".
+
+3. **Access VSware Help**:
+   - Tap the VSware Help icon at the top right of the screen.
+   - If unable to log in, click ‘No’ to indicate the issue, which will show a RED dot. The Unique Schools team will then reach out to assist.
+
+4. **Contact Support**:
+   - If the issue persists, click on the Green Button for VSware Help and select ‘Email Support’.
+   - Describe the issue and send it to App Support for further assistance.
+
+These steps should help in resolving the blank screen issue by ensuring proper login and providing access to support if needed [How To Access VSware_Slim_V5.pdf; How To Use VSware Help_Slim_V1.pdf]. |
+| 11 | Can a parent access multiple VSware accounts across different schools from a single app? | Yes, a parent can access multiple VSware accounts across different schools from a single app. The process involves:
+
+- Saving the username and password for each student within the app. This is facilitated by the autofill settings, which allow parents to manage and save login credentials for seamless entry to VSware [How To Access VSware_Slim_V5.pdf].
+- Once saved, the app will auto-populate these credentials, enabling easy access to multiple accounts without needing to manually enter login details each time [How To Access VSware_Slim_V5.pdf].
+
+This setup allows parents to efficiently manage and access information for students attending different schools using the same app interface. |
+|  | 🔹 Registration Issues |  |
+| 12 | What does the error "mobile number not found in the system" mean during registration? | The error "mobile number not found in the system" during registration likely means that the mobile number entered does not match any number provided to the school for communication purposes. This could occur if:
+
+- The mobile number entered is incorrect or has a typo.
+- The mobile number has not been registered with the school.
+- The country code is incorrect or missing.
+
+To resolve this issue, ensure that the correct mobile number, as provided to the school, is entered along with the appropriate country code. It is also advisable to verify with the school that the correct number is on file for communication purposes. [How To Download & register_STUDENTS_Slim_v3.pdf] |
+| 13 | How can a user resolve the "mobile number not found" issue? | To resolve the "mobile number not found" issue during the registration process for the UniqueSchools app, follow these steps:
+
+- **Verify Mobile Number**: Ensure that the mobile number entered is the same one provided to the school for communication purposes. Double-check the country code and the number itself for any errors.
+
+- **Check with School**: If the mobile number is correct but still not found, contact the school to confirm that they have the correct mobile number on file. It might be necessary to update the school's records if there have been any changes to the contact information.
+
+- **Retry Registration**: After verifying and possibly updating the mobile number with the school, attempt the registration process again using the correct details.
+
+- **Contact Support**: If the issue persists, reach out to UniqueSchools support at support@uniqueschools.ie for further assistance.
+
+These steps should help in resolving the issue of the mobile number not being found during the app registration process [How To Download & register_STUDENTS_Slim_v3.pdf; How To Download, register, assign swipe card_STUDENTS_Slim_v3.pdf; GENERIC_Parents App Presentation_Mar_24.pdf]. |
+| 14 | What does the error "mobile number already taken" indicate? | The error "mobile number already taken" likely indicates that the mobile number you are trying to use for registration has already been registered in the school's database. This could happen if:
+
+- The mobile number has been previously used by another user, such as a parent or guardian, to register for the school app.
+- The number is already associated with an existing account, and the system recognizes it as already in use.
+
+To resolve this issue, you may need to:
+
+- Verify with the school if the mobile number is correctly associated with your account or if it has been mistakenly linked to another account.
+- Use a different mobile number that has not been registered yet, if possible.
+
+This inference is based on the registration process described, where a mobile number is required for verification and is linked to the user's account [GENERIC_Parents App Presentation_Mar_24.pdf; How To Download, register, assign swipe card_STUDENTS_Slim_v3.pdf; How To Download & register_STUDENTS_Slim_v3.pdf]. |
+| 15 | What should a user do if their mobile number is already registered? | I don't have enough information. The provided context does not address what a user should do if their mobile number is already registered. The documents focus on the registration process, including downloading the app, entering a parent's mobile number for verification, and changing an email if entered incorrectly, but they do not cover issues related to a mobile number already being registered. [How To Download, register, assign swipe card_STUDENTS_Slim_v3.pdf; How To Download & register_STUDENTS_Slim_v3.pdf; How To Change Email on Registration_Slim.pdf] |
+| 16 | What does the error "email address already registered" mean? | The error "email address already registered" typically means that the email address you are trying to use has already been used to create an account in the system. This could occur if you attempt to register again with the same email address or if you mistakenly try to change your email to one that is already associated with another account. 
+
+To resolve this issue, you should:
+- Avoid registering again with the same email address.
+- If you need to update your email, use the 'Change Email' option provided in the registration process to ensure the email is correctly updated without duplication.
+- Verify your email by checking your inbox, including spam or junk folders, and confirm the verification to complete the registration or update process [How To Change Email on Registration_Slim.pdf; How To Download & register_STUDENTS_Slim_v3.pdf]. |
+| 17 | What should a user do if their email is already registered? | If a user finds that their email is already registered, they should follow these steps:
+
+1. **Do Not Register Again**: Avoid creating a new registration with a different email.
+2. **Change Email**: 
+   - If the email was entered incorrectly during registration, tap on ‘Change Email’ and enter the correct email address. 
+   - Ensure you check your Inbox, Spam, or Junk folder to verify the new email address.
+3. **Verify Email**: After changing the email, verify it by checking the verification email sent to your inbox. Once verified, tap on ‘I have verified my email ID’ to gain access.
+4. **Password Issues**: If you do not remember your password, tap on ‘Having a Problem’ to contact support for assistance in resetting your password.
+
+By following these steps, the user can update their email and complete the registration process without needing to register again [How To Change Email on Registration_Slim.pdf; How To Update Email_Slim.pdf; How To Download & register_STUDENTS_Slim_v3.pdf]. |
+| 18 | Can Unique Schools update or modify user data in the school system? | Unique Schools' Unique Pay system is designed to mirror the student information in the current school administration system, but there is no explicit mention in the provided context about Unique Schools having the capability to update or modify user data within the school system. The system is primarily focused on payment processing and reporting, ensuring that the student information is accurately reflected for payment purposes. Therefore, it is inferred that Unique Schools does not update or modify user data in the school system; it only mirrors existing data for its operations [12 Unique Pay + Reporting_Nov_23.docx; 12 Unique Pay + Reporting_Feb_22.pdf; 12 Unique Pay + Reporting_Nov_23.pdf]. |
+|  | 🔹 Login & Account Management |  |
+| 19 | How can a user change their registered email address in the app? | To change a registered email address in the app, follow these steps:
+
+1. **Open the App**: Start by opening the app and navigating to the home screen.
+2. **Access Profile Settings**: Tap on your name to access your profile settings.
+3. **Initiate Email Change**: Tap on ‘Change Email ID’.
+4. **Enter New Email**: Enter your new email address and your current password.
+   - If you do not remember your password, tap on ‘Having a Problem’ to contact support for assistance in resetting your password.
+5. **Verify New Email**: After entering the new email, check your inbox, including the spam/junk folder, for a verification email.
+6. **Confirm Verification**: Once you have verified the new email, return to the app and tap on ‘I have verified my email ID’ to complete the process and gain access.
+
+These steps ensure that your email is updated and verified, allowing you to continue using the app with the new email address [How To Change Email on Registration_Slim.pdf; How To Update Email_Slim.pdf]. |
+| 20 | How can a user change their registered phone number? | I don't have enough information to provide a detailed answer on how a user can change their registered phone number. The provided context focuses on changing email addresses and registering for an app using a mobile number, but it does not include specific instructions for changing a registered phone number. [How To Change Email on Registration_Slim.pdf; GENERIC_Parents App Presentation_Mar_24.pdf; How To Update Email_Slim.pdf] |
+| 21 | What steps should a user follow if they forget their password? | If a user forgets their password, they should follow these steps:
+
+1. **Reset Password for School App**:
+   - Open the app's homescreen and tap on "Forgot Password".
+   - Enter the email address used for registration (e.g., james@uniquetech.ie) and press "Reset password".
+   - Check your email for a verification message and click on the link provided to access the reset password screen.
+   - Enter a new password as prompted and save it.
+   - Return to the login screen, approve the Terms & Conditions, and log in with the new credentials [How To Reset Password_V3.pdf].
+
+2. **Reset Password for VSware**:
+   - Open the app and tap on VSware.
+   - If the username is visible but the password is not, click on "Create or Reset Password".
+   - Input your username and the last four digits of your mobile number, then press "Send Code".
+   - Enter the code received via SMS, set a new password, and click "Change Password".
+   - Save the username and password in the app for future auto-population [How To Access VSware_Slim_V5.pdf]. |
+| 22 | How can a user reset or disable their PIN in the app? | The provided context does not explicitly detail the steps to reset or disable a PIN in the app. However, based on the available information, here is a synthesized process that might be inferred:
+
+- **Reset Password**: If the user is looking to reset their password, they can follow the steps outlined in [Source 1]. This involves using the "Forgot Password" feature on the app's home screen, entering the registered email, and following the link in the verification email to set a new password.
+
+- **PIN Security**: [Source 2] mentions an optional 4-digit PIN security feature that parents/guardians can enable in their profile. While it does not provide specific steps to reset or disable the PIN, it implies that such settings can be managed within the user profile.
+
+- **Autofill and Password Management**: [Source 3] discusses managing autofill settings for email and password on a tablet, which may indirectly relate to managing security settings like a PIN. However, it does not directly address PIN reset or disablement.
+
+In summary, while the context provides detailed steps for password reset, it does not explicitly cover PIN reset or disablement. Users may need to explore the app's settings or user profile options to manage PIN security. For further assistance, contacting support at support@uniqueschools.ie might be necessary. 
+
+[How To Reset Password_V3.pdf; GENERIC_Parents App Presentation.pdf; Autofill tablet.pdf] |
+|  | 🔹 Payments Issues |  |
+| 23 | What does a failed EMI transaction notification indicate? | I couldn't find relevant information in the knowledge base to answer: "What does a failed EMI transaction notification indicate?". Please try rephrasing, or ask an admin to upload the relevant documents. |
+| 24 | What happens after a failed EMI payment attempt? | After a failed EMI payment attempt, the system will notify you via email on the verified email address you registered with. The system will make up to four attempts to take the payment within a 10-day period. If the payment is not successful after the fourth attempt, the instalment arrangement will be cancelled. Subsequently, the school will contact you to make an alternative arrangement to pay any outstanding balance. Additionally, the system will send automatic reminders for any outstanding payments [How to Shop for Parents_Slim_Nov_23.pdf]. |
+| 25 | How can a user add multiple items to their payment basket? | To add multiple items to a payment basket, a user should follow these steps:
+
+1. **Access the CMS Panel**: Open the App CMS panel and click on ‘Manage School Shop (V5)’ and then ‘Add’ to start adding items.
+
+2. **Define Item Details**:
+   - **Name**: Enter the name of the item, such as "school fees."
+   - **Nominal Account**: Specify the nominal account used for this type of item.
+   - **Description**: Provide a description of the payment, e.g., "school fees €150 to cover trips."
+
+3. **Select Payment Type**:
+   - **Variable Amount**: Allows parents to enter the amount they wish to pay.
+   - **Variable Quantity**: The cost is set, but the quantity can be specified by the parent.
+   - **None**: A standard fee where the parent can only pay the specified amount.
+   - **Full Payment**: Requires the parent to pay in full in one transaction.
+   - **Partial Payment**: Allows payment by specified installments.
+
+4. **Set Additional Options**:
+   - **Limit Payments**: Specify if there is a limit on the number of payments, e.g., limited places for an event.
+   - **Transaction Fees**: Note that transaction fees are 1.35% plus 31c per transaction.
+   - **Image and Assignment**: Optionally add an image and assign the item to specific Year/Class or Groups and students.
+
+5. **Enable Multi-Payment Feature**:
+   - If the item type is standard and full payment, check the "Allow multiple payments" option to enable parents to make multiple payments for the same item. This feature is useful for items that may require ongoing payments.
+
+6. **Finalize and Add Item**:
+   - Review the list of students and contacts assigned to the item.
+   - Select teachers/staff who will have access to see submitted payments.
+   - Set reminders for parents who have not yet paid.
+   - Click ‘Add’ to finalize the addition of the item to the shop.
+
+By following these steps, users can effectively add multiple items to their payment basket, allowing for flexible payment options and management of multiple transactions. [How To - Add Shop Item.pdf; How To - Add Shop Item.docx; Shop - Allow multiple payments.docx] |
+| 26 | Why might a user not see items in the shop section? | A user might not see items in the shop section for several reasons:
+
+- **Payment Assignment**: The payment may not have been assigned to the user's student. This could occur if the student is not expected to pay for the item or due to an oversight when the payment was assigned. The school needs to assign it for it to appear in the app [How to Shop for Parents_Slim_Nov_23.pdf].
+
+- **Payment Deadline**: The date for final payment may have passed, making the item no longer available for payment [How to Shop for Parents_Slim_Nov_23.pdf].
+
+- **Limited Availability**: If the item is restricted to a certain number of students and that number has been reached, it will automatically be removed from the shop [How to Shop for Parents_Slim_Nov_23.pdf].
+
+- **Payment Completion**: Once an item is paid for, it cannot be paid for a second time. The item will remain listed but will be greyed out until the payment deadline passes or the school unpublishes the item [How to Shop for Parents_Slim_Nov_23.pdf].
+
+These factors ensure that only relevant and available items are visible to users in the shop section. |
+| 27 | How can a user remove unwanted items from their shop list? | The provided context does not directly explain how a user can remove unwanted items from their shop list. However, it does mention that items can be automatically removed from the shop list if certain conditions are met:
+
+- If the payment is restricted to a certain number of students and this number has been reached, the item will be automatically removed from the shop list.
+- Once the date for the final payment has passed, the item will no longer be available for payment and will be removed from the shop list.
+- The school can also "unpublish" an item, which would remove it from the shop list.
+
+If a user wants to remove an item manually, they would likely need to contact the school office for assistance, as the context suggests contacting the school if an item is not appearing as expected [How to Shop for Parents_Slim_Nov_23.pdf]. |
+|  | 🔹 Easypayments |  |
+| 28 | Who should a user contact for issues related to Easypayments? | The provided context does not specifically mention who a user should contact for issues related to Easypayments. However, it does suggest that for general issues or emergencies, users should contact the Office immediately [US_V7 Update_V2.pdf]. For more specific guidance or assistance with the payment system, such as marking payments or managing school items, users are advised to contact the accounts staff or follow step-by-step instructions provided in the system documentation [UPay - Ad Hoc Payments_V1.pdf]. 
+
+If the context were to include a specific contact for Easypayments issues, it would likely be similar to these general points of contact. However, I don't have enough information to provide a definitive answer for Easypayments specifically. |
+| 29 | Does Unique Schools have access to Easypayments systems? | The provided context does not mention any access or integration of Unique Schools with Easypayments systems. The documents focus on the Unique Pay system, which is a payment solution specifically designed for schools and integrated with the STRIPE payments gateway. There is no reference to Easypayments systems in any of the passages. [12 Unique Pay + Reporting_Feb_22.pdf; 12 Unique Pay + Reporting_Nov_23.docx; 12 Unique Pay + Reporting_Nov_23.pdf] |
+|  | 🔹 App Profile Issues |  |
+| 30 | What should a user do if a name is incorrectly spelled in the app profile? | If a user's name is incorrectly spelled in the app profile, they should report the incorrect details. This can be done during the registration process when confirming the match with the school’s database record for their name. If the details do not match, there is an option to report the incorrect details [How To Download, register, assign swipe card_STUDENTS_Slim_v3.pdf]. |
+| 31 | What should a user do if they cannot see all their children in the app? | I don't have enough information to answer what a user should do if they cannot see all their children in the app. The provided context does not address this specific issue or provide troubleshooting steps related to visibility of children in the app. The documents focus on creating notice boards and forms within the UniqueSchools app but do not cover user visibility issues. [How To - Notice Board_V1.pdf; How To - Notice Board_V1.docx; How To - Create a Form V5.pdf] |

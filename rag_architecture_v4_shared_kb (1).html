@@ -1,0 +1,475 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.w{padding:1rem 0;font-family:var(--font-sans,sans-serif)}
+
+/* Toggle buttons with improved styling */
+.tog-row{display:flex;gap:8px;margin-bottom:1.5rem;padding:0 0.5rem;flex-wrap:wrap}
+.tog{
+  padding:8px 16px;
+  border-radius:8px;
+  border:1px solid var(--color-border-secondary);
+  background:var(--color-background-primary);
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  color:var(--color-text-secondary);
+  font-family:inherit;
+  transition:all .2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:0 1px 2px rgba(0,0,0,0.04);
+}
+.tog:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+.tog.a{
+  background:linear-gradient(135deg, #FAEEDA 0%, #F5D9A8 100%);
+  border-color:#EF9F27;
+  color:#633806;
+  box-shadow:0 2px 8px rgba(239,159,39,0.25);
+}
+.tog.q{
+  background:linear-gradient(135deg, #E6F1FB 0%, #B8D7F7 100%);
+  border-color:#378ADD;
+  color:#0C447C;
+  box-shadow:0 2px 8px rgba(55,138,221,0.25);
+}
+.tog.b{
+  background:linear-gradient(135deg, #EEEDFE 0%, #D4D1FC 100%);
+  border-color:#7F77DD;
+  color:#3C3489;
+  box-shadow:0 2px 8px rgba(127,119,221,0.25);
+}
+
+/* Node styling with depth and polish */
+.node{
+  cursor:pointer;
+  transition:all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+}
+.node:hover{
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,0.12));
+  transform:translateY(-2px);
+}
+.node rect{
+  transition:all .2s ease;
+}
+.node:hover rect{
+  stroke-width:1.5px;
+}
+
+/* Color variants with subtle gradients */
+.c-amber rect{fill:url(#grad-amber);stroke:#D4A03A}
+.c-coral rect{fill:url(#grad-coral);stroke:#C75A3A}
+.c-teal rect{fill:url(#grad-teal);stroke:#2A9D7A}
+.c-purple rect{fill:url(#grad-purple);stroke:#7B6BC7}
+.c-blue rect{fill:url(#grad-blue);stroke:#4A8FD4}
+.c-gray rect{fill:url(#grad-gray);stroke:#8A94A6}
+.c-green rect{fill:url(#grad-green);stroke:#5A9A3A}
+.c-red rect{fill:url(#grad-red);stroke:#C75A5A}
+
+/* Text styling */
+.th{font-size:12px;font-weight:600;fill:var(--color-text-primary)}
+.ts{font-size:10px;font-weight:500;fill:var(--color-text-secondary)}
+
+/* Zone backgrounds with subtle fills */
+.zone-bg{fill:none;stroke-width:1}
+.zone-label{font-size:11px;font-weight:600}
+
+/* Column separators */
+.col-line{stroke:var(--color-border-tertiary);stroke-width:0.5;stroke-dasharray:3 5;opacity:0.6}
+
+/* Arrow markers and lines */
+line, path{transition:opacity .3s ease}
+
+/* Legend styling */
+.legend-text{font-size:10px;font-weight:500;fill:var(--color-text-secondary)}
+
+/* Icon styling */
+#icon-admin, #icon-user{transition:all .2s ease}
+#icon-admin:hover, #icon-user:hover{transform:scale(1.05)}
+</style>
+
+<div class="w">
+<div class="tog-row">
+  <button class="tog b" id="tb" onclick="show('both')">Both flows</button>
+  <button class="tog" id="ta" onclick="show('ingest')">Upload flow</button>
+  <button class="tog" id="tq" onclick="show('query')">Query flow</button>
+</div>
+
+<svg width="100%" viewBox="0 0 680 1120" id="sv">
+<defs>
+  <!-- Gradients for node fills -->
+  <linearGradient id="grad-amber" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:#FDF6E9"/>
+    <stop offset="100%" style="stop-color:#FAEEDA"/>
+  </linearGradient>
+  <linearGradient id="grad-coral" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:#FDF0EB"/>
+    <stop offset="100%" style="stop-color:#FCE5DC"/>
+  </linearGradient>
+  <linearGradient id="grad-teal" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:#E8F7F2"/>
+    <stop offset="100%" style="stop-color:#D4F0E7"/>
+  </linearGradient>
+  <linearGradient id="grad-purple" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:#F5F4FE"/>
+    <stop offset="100%" style="stop-color:#EEEDFE"/>
+  </linearGradient>
+  <linearGradient id="grad-blue" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:#EDF5FC"/>
+    <stop offset="100%" style="stop-color:#E0EEF9"/>
+  </linearGradient>
+  <linearGradient id="grad-gray" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:#F7F8FA"/>
+    <stop offset="100%" style="stop-color:#EDF0F4"/>
+  </linearGradient>
+  <linearGradient id="grad-green" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:#F0F7EC"/>
+    <stop offset="100%" style="stop-color:#E3F0DC"/>
+  </linearGradient>
+  <linearGradient id="grad-red" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" style="stop-color:#FDF0F0"/>
+    <stop offset="100%" style="stop-color:#FCE5E5"/>
+  </linearGradient>
+  
+  <!-- Zone background gradients -->
+  <linearGradient id="cloud-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" style="stop-color:#E6F1FB;stop-opacity:0.3"/>
+    <stop offset="100%" style="stop-color:#D4E7F7;stop-opacity:0.2"/>
+  </linearGradient>
+  <linearGradient id="rag-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" style="stop-color:#EEEDFE;stop-opacity:0.3"/>
+    <stop offset="100%" style="stop-color:#E3E1FC;stop-opacity:0.2"/>
+  </linearGradient>
+  <linearGradient id="obs-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" style="stop-color:#FAEEDA;stop-opacity:0.3"/>
+    <stop offset="100%" style="stop-color:#F5E5C8;stop-opacity:0.2"/>
+  </linearGradient>
+  
+  <!-- Arrow marker -->
+  <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ══ COLUMN HEADERS ══ -->
+<text class="ts" x="88" y="22" text-anchor="middle" fill="var(--color-text-tertiary)" style="font-weight:600;letter-spacing:0.5px">User / Admin</text>
+<text class="ts" x="310" y="22" text-anchor="middle" fill="var(--color-text-tertiary)" style="font-weight:600;letter-spacing:0.5px">Your server</text>
+<text class="ts" x="556" y="22" text-anchor="middle" fill="var(--color-text-tertiary)" style="font-weight:600;letter-spacing:0.5px">Storage &amp; AI (cloud)</text>
+<line class="col-line" x1="178" y1="28" x2="178" y2="1105"/>
+<line class="col-line" x1="432" y1="28" x2="432" y2="1105"/>
+
+<!-- ══ CLOUD BOUNDARY ══ -->
+<rect x="438" y="36" width="226" height="544" rx="12" fill="url(#cloud-grad)" stroke="#378ADD" stroke-width="1" stroke-dasharray="6 4" opacity="0.6"/>
+<text class="zone-label" x="551" y="30" text-anchor="middle" fill="#185FA5">Cloud / external APIs</text>
+
+<!-- ══ RAG ZONE ══ -->
+<rect x="184" y="612" width="470" height="322" rx="12" fill="url(#rag-grad)" stroke="#7F77DD" stroke-width="1" stroke-dasharray="5 4" opacity="0.7"/>
+<text class="zone-label" x="256" y="607" text-anchor="middle" fill="#534AB7">RAG pipeline</text>
+
+<!-- ══ RETRIEVER SERVICE (inner zone inside RAG) ══ -->
+<rect x="190" y="696" width="236" height="226" rx="10" fill="none" stroke="#7F77DD" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.5"/>
+<text class="zone-label" x="258" y="692" text-anchor="middle" fill="#534AB7" style="font-size:10px">Retriever service</text>
+
+<!-- ══ OBSERVABILITY SIDEBAR ══ -->
+<rect x="18" y="750" width="144" height="218" rx="10" fill="url(#obs-grad)" stroke="#BA7517" stroke-width="1" stroke-dasharray="5 4" opacity="0.6"/>
+<text class="zone-label" x="90" y="745" text-anchor="middle" fill="#854F0B">Observability</text>
+<g class="node c-amber" id="obs1" onclick="sendPrompt('What should I log for a shared knowledge base RAG system?')">
+  <rect x="26" y="756" width="128" height="36" rx="6" stroke-width="0.5"/>
+  <text class="th" x="90" y="769" text-anchor="middle" dominant-baseline="central">Logging</text>
+  <text class="ts" x="90" y="783" text-anchor="middle" dominant-baseline="central">queries · errors · latency</text>
+</g>
+<g class="node c-amber" id="obs2" onclick="sendPrompt('How does a thumbs-up/down feedback loop improve RAG retrieval over time?')">
+  <rect x="26" y="798" width="128" height="36" rx="6" stroke-width="0.5"/>
+  <text class="th" x="90" y="811" text-anchor="middle" dominant-baseline="central">Feedback loop</text>
+  <text class="ts" x="90" y="825" text-anchor="middle" dominant-baseline="central">thumbs · retraining signal</text>
+</g>
+<g class="node c-amber" id="obs3" onclick="sendPrompt('What does gap analysis mean in a knowledge base — how do I find unanswered questions?')">
+  <rect x="26" y="840" width="128" height="48" rx="6" stroke-width="0.5"/>
+  <text class="th" x="90" y="856" text-anchor="middle" dominant-baseline="central">Analytics</text>
+  <text class="ts" x="90" y="871" text-anchor="middle" dominant-baseline="central">gap analysis · confidence</text>
+  <text class="ts" x="90" y="883" text-anchor="middle" dominant-baseline="central">popular / failing topics</text>
+</g>
+<g class="node c-amber" id="obs4" onclick="sendPrompt('What should trigger an alert in a RAG knowledge base — low confidence, high latency, errors?')">
+  <rect x="26" y="894" width="128" height="36" rx="6" stroke-width="0.5"/>
+  <text class="th" x="90" y="907" text-anchor="middle" dominant-baseline="central">Alert / monitor</text>
+  <text class="ts" x="90" y="921" text-anchor="middle" dominant-baseline="central">low-confidence · failures</text>
+</g>
+<g class="node c-amber" id="obs5" onclick="sendPrompt('How do I build a query heat-map to see which topics are most and least covered in my knowledge base?')">
+  <rect x="26" y="936" width="128" height="48" rx="6" stroke-width="0.5"/>
+  <text class="th" x="90" y="950" text-anchor="middle" dominant-baseline="central">Global usage</text>
+  <text class="ts" x="90" y="965" text-anchor="middle" dominant-baseline="central">top queries · heat-map</text>
+  <text class="ts" x="90" y="977" text-anchor="middle" dominant-baseline="central">feedback trends</text>
+</g>
+
+<!-- ════════════════ UPLOAD FLOW ════════════════ -->
+
+<!-- Admin icon -->
+<g id="icon-admin">
+  <circle cx="88" cy="58" r="14" fill="url(#grad-amber)" stroke="#EF9F27" stroke-width="0.8"/>
+  <circle cx="88" cy="53" r="5.5" fill="#854F0B"/>
+  <path d="M70 78 Q70 67 88 67 Q106 67 106 78" fill="#854F0B" stroke="none"/>
+</g>
+<text class="th" x="88" y="84" text-anchor="middle" fill="#633806">Admin</text>
+<text class="ts" x="88" y="98" text-anchor="middle" fill="#854F0B">uploads docs</text>
+
+<line id="ai-down" x1="88" y1="102" x2="88" y2="122" stroke="#BA7517" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Parser -->
+<g class="node c-amber" id="n-parse" onclick="sendPrompt('What formats should the document parser support for a school knowledge base?')">
+  <rect x="26" y="122" width="128" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="90" y="140" text-anchor="middle" dominant-baseline="central">Parser &amp; cleaner</text>
+  <text class="ts" x="90" y="157" text-anchor="middle" dominant-baseline="central">PDF · DOCX · text</text>
+</g>
+
+<text class="ts" x="90" y="181" text-anchor="middle" fill="#854F0B" style="font-weight:500">async job →</text>
+<line id="ai-q" x1="90" y1="184" x2="192" y2="210" stroke="#BA7517" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+
+<!-- Job Queue -->
+<g class="node c-amber" id="n-queue" onclick="sendPrompt('What job queue technology is best for a document ingestion pipeline — SQS, Kafka, or BullMQ?')">
+  <rect x="192" y="198" width="174" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="279" y="216" text-anchor="middle" dominant-baseline="central">Job queue</text>
+  <text class="ts" x="279" y="233" text-anchor="middle" dominant-baseline="central">SQS / Kafka · batch jobs</text>
+</g>
+
+<line id="ai-orch-a" x1="279" y1="246" x2="279" y2="268" stroke="#BA7517" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Ingestion Orchestrator -->
+<g class="node c-coral" id="n-orch" onclick="sendPrompt('What does an ingestion orchestrator handle — retries, ordering, versioning, soft-delete?')">
+  <rect x="192" y="268" width="174" height="76" rx="8" stroke-width="1"/>
+  <text class="th" x="279" y="287" text-anchor="middle" dominant-baseline="central">Ingestion orchestrator</text>
+  <text class="ts" x="279" y="304" text-anchor="middle" dominant-baseline="central">retries · order · batching</text>
+  <text class="ts" x="279" y="319" text-anchor="middle" dominant-baseline="central">versioning · upsert</text>
+  <text class="ts" x="279" y="334" text-anchor="middle" dominant-baseline="central">soft-delete old chunks</text>
+</g>
+
+<!-- orchestrator → doc store -->
+<line id="ai-todoc" x1="366" y1="300" x2="438" y2="300" stroke="#BA7517" stroke-width="1.5" marker-end="url(#ar)"/>
+<!-- orchestrator → chunker -->
+<line id="ai-chunk-a" x1="279" y1="344" x2="279" y2="368" stroke="#BA7517" stroke-width="1.5" marker-end="url(#ar)"/>
+<!-- orchestrator → metadata (dashed side-write, L-bend avoiding chunker) -->
+<path id="ai-tometa" d="M 366 344 L 406 344 L 406 462 L 438 462" fill="none" stroke="#BA7517" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+<!-- upsert return arrow: orchestrator ← doc store (version bump) -->
+<path id="ai-upsert" d="M 438 282 L 406 282 L 406 268 L 366 268" fill="none" stroke="#D85A30" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+<text class="ts" x="412" y="275" text-anchor="middle" fill="#993C1D" style="font-weight:500">upsert / version bump</text>
+
+<!-- Doc Store WRITE -->
+<g class="node c-teal" id="n-docstore" onclick="sendPrompt('Should the doc store save the original file, extracted text, or both?')">
+  <rect x="438" y="278" width="220" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="296" text-anchor="middle" dominant-baseline="central">Raw doc store — write</text>
+  <text class="ts" x="548" y="313" text-anchor="middle" dominant-baseline="central">S3 · file + extracted text</text>
+</g>
+<text class="ts" x="548" y="334" text-anchor="middle" fill="#0F6E56" style="font-weight:500">doc_id + version_id assigned</text>
+
+<!-- Chunker -->
+<g class="node c-amber" id="n-chunk" onclick="sendPrompt('What chunk size and overlap is recommended for help documents vs business requirement documents?')">
+  <rect x="192" y="368" width="174" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="279" y="386" text-anchor="middle" dominant-baseline="central">Chunker</text>
+  <text class="ts" x="279" y="403" text-anchor="middle" dominant-baseline="central">300–500 words · overlap</text>
+</g>
+
+<line id="ai-emb" x1="279" y1="416" x2="279" y2="438" stroke="#BA7517" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Embedding model -->
+<g class="node c-purple" id="n-embed-i" onclick="sendPrompt('Does the embedding model need to be the same one for both ingestion and querying?')">
+  <rect x="192" y="438" width="174" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="279" y="456" text-anchor="middle" dominant-baseline="central">Embedding model</text>
+  <text class="ts" x="279" y="473" text-anchor="middle" dominant-baseline="central">chunk → 1536-dim vector</text>
+</g>
+
+<line id="ai-vecw" x1="366" y1="462" x2="438" y2="462" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Vector Index WRITE -->
+<g class="node c-purple" id="n-vecwrite" onclick="sendPrompt('What is actually stored in the vector index — the vector only, or also the text?')">
+  <rect x="438" y="440" width="220" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="458" text-anchor="middle" dominant-baseline="central">Vector index — write</text>
+  <text class="ts" x="548" y="475" text-anchor="middle" dominant-baseline="central">chunk_id + vector stored</text>
+</g>
+<text class="ts" x="548" y="496" text-anchor="middle" fill="#534AB7" style="font-weight:500">chunk_id → doc_id + version_id</text>
+
+<!-- Metadata DB WRITE -->
+<g class="node c-teal" id="n-metawrite" onclick="sendPrompt('What metadata fields should I store per chunk for filtering and citations?')">
+  <rect x="438" y="514" width="220" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="532" text-anchor="middle" dominant-baseline="central">Metadata DB — write</text>
+  <text class="ts" x="548" y="549" text-anchor="middle" dominant-baseline="central">doc_id · chunk_id · folder · page</text>
+</g>
+<text class="ts" x="548" y="570" text-anchor="middle" fill="#0F6E56" style="font-weight:500">doc_id + chunk_id + version_id = core link</text>
+
+<!-- ingest / query divider -->
+<line x1="18" y1="590" x2="660" y2="590" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="2 6"/>
+<text class="ts" x="340" y="604" text-anchor="middle" fill="var(--color-text-tertiary)" style="font-weight:500">query flow ↓</text>
+
+<!-- ════════════════ QUERY FLOW ════════════════ -->
+
+<!-- SaaS API endpoint entry -->
+<g class="node c-gray" id="n-saas" onclick="sendPrompt('How should I expose the knowledge base query as a SaaS API endpoint — REST, GraphQL, or WebSocket for streaming?')">
+  <rect x="184" y="614" width="242" height="36" rx="6" stroke-width="0.5"/>
+  <text class="th" x="305" y="627" text-anchor="middle" dominant-baseline="central">SaaS API / frontend endpoint</text>
+  <text class="ts" x="305" y="641" text-anchor="middle" dominant-baseline="central">REST · web · mobile app</text>
+</g>
+
+<!-- End User icon -->
+<g id="icon-user">
+  <circle cx="88" cy="630" r="14" fill="url(#grad-blue)" stroke="#378ADD" stroke-width="0.8"/>
+  <circle cx="88" cy="625" r="5.5" fill="#185FA5"/>
+  <path d="M70 650 Q70 639 88 639 Q106 639 106 650" fill="#185FA5" stroke="none"/>
+</g>
+<text class="th" x="88" y="656" text-anchor="middle" fill="#0C447C">User</text>
+<text class="ts" x="88" y="669" text-anchor="middle" fill="#185FA5">real-time query</text>
+
+<!-- user → SaaS endpoint -->
+<line id="qu-saas" x1="152" y1="632" x2="184" y2="632" stroke="#378ADD" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- SaaS → auth -->
+<line id="qu-auth-a" x1="305" y1="650" x2="305" y2="666" stroke="#378ADD" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Auth / Session check -->
+<g class="node c-gray" id="n-authn" onclick="sendPrompt('What does session validation look like in a SaaS knowledge base — JWT, API key, or OAuth?')">
+  <rect x="192" y="666" width="236" height="40" rx="7" stroke-width="0.5"/>
+  <text class="th" x="310" y="681" text-anchor="middle" dominant-baseline="central">Auth / session check</text>
+  <text class="ts" x="310" y="697" text-anchor="middle" dominant-baseline="central">JWT · API key · user ID</text>
+</g>
+
+<!-- auth → access control -->
+<line id="qu-ac-a" x1="310" y1="706" x2="310" y2="720" stroke="#378ADD" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Access Control -->
+<g class="node c-red" id="n-auth" onclick="sendPrompt('How do I implement role-based access control for admin vs end-user in a shared knowledge base?')">
+  <rect x="192" y="720" width="236" height="40" rx="7" stroke-width="0.5"/>
+  <text class="th" x="310" y="735" text-anchor="middle" dominant-baseline="central">Access control</text>
+  <text class="ts" x="310" y="751" text-anchor="middle" dominant-baseline="central">role check · scope filter · admin vs user</text>
+</g>
+
+<!-- access control → cache check -->
+<line id="qu-cache-a" x1="310" y1="760" x2="310" y2="774" stroke="#378ADD" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Cache + Rate Limit (NEW) -->
+<g class="node c-green" id="n-cache" onclick="sendPrompt('What should I cache in a RAG system — the query embedding, the vector search result, or the full LLM answer?')">
+  <rect x="192" y="774" width="236" height="48" rx="7" stroke-width="0.5"/>
+  <text class="th" x="310" y="792" text-anchor="middle" dominant-baseline="central">Cache + rate limit</text>
+  <text class="ts" x="310" y="808" text-anchor="middle" dominant-baseline="central">query cache · embedding cache</text>
+  <text class="ts" x="310" y="820" text-anchor="middle" dominant-baseline="central">per-user / global quotas</text>
+</g>
+<text class="ts" x="440" y="794" text-anchor="start" fill="#3B6D11" style="font-weight:500">cache hit → &lt;100ms</text>
+<text class="ts" x="440" y="806" text-anchor="start" fill="#3B6D11" style="font-weight:500">huge cost saving</text>
+
+<!-- cache miss → embed query -->
+<line id="qu-emb-a" x1="310" y1="822" x2="310" y2="838" stroke="#378ADD" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Embed Query -->
+<g class="node c-purple" id="n-embq" onclick="sendPrompt('Why must the query be embedded with the same model as ingestion — what happens if you use a different model?')">
+  <rect x="192" y="838" width="236" height="40" rx="7" stroke-width="0.5"/>
+  <text class="th" x="310" y="853" text-anchor="middle" dominant-baseline="central">Embed query</text>
+  <text class="ts" x="310" y="869" text-anchor="middle" dominant-baseline="central">same model as ingest</text>
+</g>
+
+<line id="qu-vsearch-a" x1="310" y1="878" x2="310" y2="892" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Vector search + metadata filter -->
+<g class="node c-purple" id="n-vsearch" onclick="sendPrompt('How does hybrid search combine vector similarity with keyword matching and metadata filters?')">
+  <rect x="192" y="892" width="236" height="48" rx="7" stroke-width="0.5"/>
+  <text class="th" x="310" y="910" text-anchor="middle" dominant-baseline="central">Hybrid search + meta filter</text>
+  <text class="ts" x="310" y="926" text-anchor="middle" dominant-baseline="central">vector + keyword · top-K (configurable)</text>
+  <text class="ts" x="310" y="938" text-anchor="middle" dominant-baseline="central">date · tag · folder filter</text>
+</g>
+
+<!-- vector search → vector index read -->
+<line id="qu-vread" x1="428" y1="916" x2="438" y2="916" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Vector Index READ -->
+<g class="node c-purple" id="n-vecread" onclick="sendPrompt('What does the vector index return for each hit — chunk ID, score, and what else?')">
+  <rect x="438" y="894" width="220" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="912" text-anchor="middle" dominant-baseline="central">Vector index — search</text>
+  <text class="ts" x="548" y="929" text-anchor="middle" dominant-baseline="central">chunk_id + similarity score</text>
+</g>
+
+<!-- vec read → doc store read -->
+<line id="qu-docread" x1="548" y1="942" x2="548" y2="960" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Doc Store READ -->
+<g class="node c-teal" id="n-docread" onclick="sendPrompt('How does the system use chunk_id to retrieve the actual passage from the document store?')">
+  <rect x="438" y="960" width="220" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="978" text-anchor="middle" dominant-baseline="central">Raw doc store — read</text>
+  <text class="ts" x="548" y="995" text-anchor="middle" dominant-baseline="central">chunk_id → fetch passage text</text>
+</g>
+
+<!-- doc store read → reranker (L-bend left, avoiding boxes) -->
+<path id="qu-rerank-a" d="M 438 984 L 432 984 L 432 952 L 428 952" fill="none" stroke="#0F6E56" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Re-ranker -->
+<g class="node c-purple" id="n-rerank" onclick="sendPrompt('What re-ranking model works best and how much does it improve answer accuracy?')">
+  <rect x="184" y="952" width="244" height="40" rx="7" stroke-width="0.5"/>
+  <text class="th" x="306" y="967" text-anchor="middle" dominant-baseline="central">Re-ranker</text>
+  <text class="ts" x="306" y="983" text-anchor="middle" dominant-baseline="central">cross-encoder · keep top-3</text>
+</g>
+<text class="ts" x="306" y="1000" text-anchor="middle" fill="#534AB7" style="font-weight:500">reranker score → confidence %</text>
+
+<line id="qu-ctx-a" x1="306" y1="1004" x2="306" y2="1018" stroke="#7F77DD" stroke-width="1.5" marker-end="url(#ar)"/>
+
+<!-- Prompt builder -->
+<g class="node c-purple" id="n-ctx" onclick="sendPrompt('What does a well-structured RAG prompt look like — system instructions, context, query, guardrails?')">
+  <rect x="184" y="1018" width="244" height="62" rx="8" stroke-width="1"/>
+  <text class="th" x="306" y="1036" text-anchor="middle" dominant-baseline="central">Prompt builder</text>
+  <text class="ts" x="306" y="1053" text-anchor="middle" dominant-baseline="central">instructions + guardrails + context</text>
+  <text class="ts" x="306" y="1067" text-anchor="middle" dominant-baseline="central">+ query → LLM</text>
+</g>
+
+<!-- prompt → LLM -->
+<line id="qu-llm" x1="428" y1="1049" x2="438" y2="1049" stroke="#185FA5" stroke-width="2" marker-end="url(#ar)"/>
+
+<!-- LLM -->
+<g class="node c-blue" id="n-llm" onclick="sendPrompt('Which Claude model gives the best cost-quality tradeoff for a shared knowledge base — Sonnet or Haiku?')">
+  <rect x="438" y="1026" width="220" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="1044" text-anchor="middle" dominant-baseline="central">LLM API</text>
+  <text class="ts" x="548" y="1061" text-anchor="middle" dominant-baseline="central">Claude / GPT-4 · HTTPS</text>
+</g>
+
+<!-- LLM → back (L-bend, labelled streaming tokens) -->
+<path id="qu-back" d="M 438 1074 L 370 1074 L 370 1095 L 178 1095" fill="none" stroke="#185FA5" stroke-width="2" marker-end="url(#ar)"/>
+<text class="ts" x="390" y="1090" text-anchor="middle" fill="#185FA5" style="font-weight:500">streaming tokens</text>
+
+<!-- Citation + formatter -->
+<g class="node c-blue" id="n-format" onclick="sendPrompt('How does the citation builder link answer text back to source documents and page numbers?')">
+  <rect x="26" y="1074" width="152" height="48" rx="8" stroke-width="0.5"/>
+  <text class="th" x="102" y="1092" text-anchor="middle" dominant-baseline="central">Citation + formatter</text>
+  <text class="ts" x="102" y="1109" text-anchor="middle" dominant-baseline="central">sources · confidence %</text>
+</g>
+
+<!-- obs → formatter -->
+<path id="obs-link" d="M 166 990 L 178 990 L 178 1098 L 178 1098" fill="none" stroke="#BA7517" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#ar)"/>
+
+<!-- ══ LEGEND ══ -->
+<line x1="438" y1="614" x2="462" y2="614" stroke="#BA7517" stroke-width="2" marker-end="url(#ar)"/>
+<text class="legend-text" x="468" y="618">Upload (async)</text>
+<line x1="438" y1="630" x2="462" y2="630" stroke="#378ADD" stroke-width="2" marker-end="url(#ar)"/>
+<text class="legend-text" x="468" y="634">Query (real-time)</text>
+<line x1="438" y1="646" x2="462" y2="646" stroke="#D85A30" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+<text class="legend-text" x="468" y="650">Version / upsert path</text>
+<line x1="438" y1="662" x2="462" y2="662" stroke="#BA7517" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+<text class="legend-text" x="468" y="666">Metadata side-write</text>
+
+</svg>
+</div>
+
+<script>
+const iIds=['n-parse','n-queue','n-orch','n-docstore','n-chunk','n-embed-i','n-vecwrite','n-metawrite',
+            'icon-admin','ai-down','ai-q','ai-orch-a','ai-todoc','ai-chunk-a','ai-tometa','ai-emb','ai-vecw','ai-upsert'];
+const qIds=['n-saas','n-authn','n-auth','n-cache','n-embq','n-vsearch','n-vecread','n-docread',
+            'n-rerank','n-ctx','n-llm','n-format',
+            'obs1','obs2','obs3','obs4','obs5',
+            'icon-user','qu-saas','qu-auth-a','qu-ac-a','qu-cache-a','qu-emb-a','qu-vsearch-a',
+            'qu-vread','qu-docread','qu-rerank-a','qu-ctx-a','qu-llm','qu-back','obs-link'];
+
+function show(m){
+  document.getElementById('tb').className='tog'+(m==='both'?' b':'');
+  document.getElementById('ta').className='tog'+(m==='ingest'?' a':'');
+  document.getElementById('tq').className='tog'+(m==='query'?' q':'');
+  [...iIds,...qIds].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    if(m==='both')el.style.opacity='1';
+    else if(m==='ingest')el.style.opacity=iIds.includes(id)?'1':'0.12';
+    else el.style.opacity=qIds.includes(id)?'1':'0.12';
+  });
+}
+</script>

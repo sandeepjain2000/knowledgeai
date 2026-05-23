@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG Architecture v5 — Knowledge Base System</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #F5F4F0;
+    color: #1A1A18;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1A1A18;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: #6B6A65;
+    margin-bottom: 1.5rem;
+  }
+  .card {
+    background: #fff;
+    border: 0.5px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .tog-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .tog {
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: 0.5px solid rgba(0,0,0,0.15);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #6B6A65;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .tog:hover { background: #F0EEE8; }
+  .tog.a { background: #FAEEDA; border-color: #EF9F27; color: #633806; }
+  .tog.q { background: #E6F1FB; border-color: #85B7EB; color: #0C447C; }
+  .tog.b { background: #EEEDFE; border-color: #AFA9EC; color: #3C3489; }
+
+  /* SVG theme vars */
+  svg { display: block; width: 100%; }
+  .t  { font-family: inherit; font-size: 14px; fill: #1A1A18; }
+  .ts { font-family: inherit; font-size: 12px; fill: #6B6A65; }
+  .th { font-family: inherit; font-size: 14px; font-weight: 500; fill: #1A1A18; }
+  .node { cursor: pointer; }
+  .node:hover { opacity: 0.82; }
+
+  /* colour ramps — light mode only (artifact) */
+  .c-amber > rect, .c-amber > circle, .c-amber > ellipse { fill: #FAEEDA; stroke: #EF9F27; }
+  .c-amber .th { fill: #633806; }
+  .c-amber .ts { fill: #854F0B; }
+
+  .c-teal > rect, .c-teal > circle, .c-teal > ellipse { fill: #E1F5EE; stroke: #5DCAA5; }
+  .c-teal .th { fill: #085041; }
+  .c-teal .ts { fill: #0F6E56; }
+
+  .c-purple > rect, .c-purple > circle, .c-purple > ellipse { fill: #EEEDFE; stroke: #AFA9EC; }
+  .c-purple .th { fill: #3C3489; }
+  .c-purple .ts { fill: #534AB7; }
+
+  .c-coral > rect, .c-coral > circle, .c-coral > ellipse { fill: #FAECE7; stroke: #F0997B; }
+  .c-coral .th { fill: #712B13; }
+  .c-coral .ts { fill: #993C1D; }
+
+  .c-green > rect, .c-green > circle, .c-green > ellipse { fill: #EAF3DE; stroke: #97C459; }
+  .c-green .th { fill: #27500A; }
+  .c-green .ts { fill: #3B6D11; }
+
+  .c-blue > rect, .c-blue > circle, .c-blue > ellipse { fill: #E6F1FB; stroke: #85B7EB; }
+  .c-blue .th { fill: #0C447C; }
+  .c-blue .ts { fill: #185FA5; }
+
+  .c-red > rect, .c-red > circle, .c-red > ellipse { fill: #FCEBEB; stroke: #F09595; }
+  .c-red .th { fill: #791F1F; }
+  .c-red .ts { fill: #A32D2D; }
+
+  .c-gray > rect, .c-gray > circle, .c-gray > ellipse { fill: #F1EFE8; stroke: #B4B2A9; }
+  .c-gray .th { fill: #444441; }
+  .c-gray .ts { fill: #5F5E5A; }
+
+  .arr { stroke: #888780; stroke-width: 1.5px; fill: none; }
+  .box { fill: #F0EEE8; stroke: rgba(0,0,0,0.15); }
+  .leader { stroke: rgba(0,0,0,0.2); stroke-width: 0.5px; stroke-dasharray: 4 3; fill: none; }
+
+  .legend-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6B6A65;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 11.5px;
+    color: #6B6A65;
+    align-items: center;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .leg-line { width: 28px; height: 2px; border-radius: 1px; }
+  .leg-dash { width: 28px; height: 0; border-top: 1.5px dashed; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>RAG Architecture — Knowledge Base System</h1>
+  <p class="subtitle">v5 · Single shared knowledge base · Both ingestion and query flows · Click any node to explore</p>
+
+  <div class="tog-row">
+    <button class="tog b" id="tb" onclick="show('both')">Both flows</button>
+    <button class="tog" id="ta" onclick="show('ingest')">Upload flow</button>
+    <button class="tog" id="tq" onclick="show('query')">Query flow</button>
+  </div>
+
+<svg viewBox="0 0 680 1520" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- COLUMN HEADERS -->
+<text class="ts" x="88"  y="22" text-anchor="middle" fill="#9B9A95">User / Admin</text>
+<text class="ts" x="306" y="22" text-anchor="middle" fill="#9B9A95">Your server</text>
+<text class="ts" x="556" y="22" text-anchor="middle" fill="#9B9A95">Storage &amp; external APIs</text>
+<line x1="178" y1="30" x2="178" y2="1500" stroke="rgba(0,0,0,0.08)" stroke-width="0.5" stroke-dasharray="3 5"/>
+<line x1="432" y1="30" x2="432" y2="1500" stroke="rgba(0,0,0,0.08)" stroke-width="0.5" stroke-dasharray="3 5"/>
+
+<!-- CLOUD BOUNDARY -->
+<rect x="438" y="38" width="226" height="870" rx="12" fill="none" stroke="#378ADD" stroke-width="0.8" stroke-dasharray="6 4" opacity="0.45"/>
+<text class="ts" x="551" y="32" text-anchor="middle" fill="#185FA5">Cloud / external APIs</text>
+
+<!-- API GATEWAY BAND -->
+<rect x="178" y="752" width="476" height="60" rx="10" fill="none" stroke="#888780" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.5"/>
+<text class="ts" x="256" y="746" text-anchor="middle" fill="#5F5E5A">API gateway</text>
+
+<!-- RETRIEVER ZONE -->
+<rect x="184" y="930" width="248" height="248" rx="10" fill="none" stroke="#7F77DD" stroke-width="0.7" stroke-dasharray="4 3" opacity="0.6"/>
+<text class="ts" x="262" y="924" text-anchor="middle" fill="#534AB7">Retriever service</text>
+
+<!-- GENERATION ZONE -->
+<rect x="184" y="1202" width="470" height="224" rx="10" fill="none" stroke="#185FA5" stroke-width="0.7" stroke-dasharray="4 3" opacity="0.5"/>
+<text class="ts" x="252" y="1196" text-anchor="middle" fill="#185FA5">Generation pipeline</text>
+
+<!-- OBSERVABILITY SIDEBAR -->
+<rect x="18" y="970" width="148" height="356" rx="10" fill="none" stroke="#BA7517" stroke-width="0.8" stroke-dasharray="5 4" opacity="0.6"/>
+<text class="ts" x="92" y="964" text-anchor="middle" fill="#854F0B">Observability</text>
+
+<g class="node c-amber" id="obs1">
+  <rect x="26" y="978" width="132" height="52" rx="6" stroke-width="0.5"/>
+  <text class="th" x="92" y="997" text-anchor="middle" dominant-baseline="central">Logging</text>
+  <text class="ts" x="92" y="1014" text-anchor="middle" dominant-baseline="central">every stage · latency</text>
+</g>
+<g class="node c-amber" id="obs2">
+  <rect x="26" y="1040" width="132" height="52" rx="6" stroke-width="0.5"/>
+  <text class="th" x="92" y="1059" text-anchor="middle" dominant-baseline="central">Cache + retrieval</text>
+  <text class="ts" x="92" y="1076" text-anchor="middle" dominant-baseline="central">hit/miss · reranker score</text>
+</g>
+<g class="node c-amber" id="obs3">
+  <rect x="26" y="1102" width="132" height="64" rx="6" stroke-width="0.5"/>
+  <text class="th" x="92" y="1121" text-anchor="middle" dominant-baseline="central">Gap analysis</text>
+  <text class="ts" x="92" y="1139" text-anchor="middle" dominant-baseline="central">low-confidence queries</text>
+  <text class="ts" x="92" y="1155" text-anchor="middle" dominant-baseline="central">unanswered topics</text>
+</g>
+<g class="node c-amber" id="obs4">
+  <rect x="26" y="1176" width="132" height="52" rx="6" stroke-width="0.5"/>
+  <text class="th" x="92" y="1195" text-anchor="middle" dominant-baseline="central">Feedback loop</text>
+  <text class="ts" x="92" y="1212" text-anchor="middle" dominant-baseline="central">thumbs · retraining signal</text>
+</g>
+<g class="node c-amber" id="obs5">
+  <rect x="26" y="1238" width="132" height="64" rx="6" stroke-width="0.5"/>
+  <text class="th" x="92" y="1257" text-anchor="middle" dominant-baseline="central">Global usage</text>
+  <text class="ts" x="92" y="1275" text-anchor="middle" dominant-baseline="central">top queries · heat-map</text>
+  <text class="ts" x="92" y="1291" text-anchor="middle" dominant-baseline="central">ingestion failures</text>
+</g>
+
+<!-- obs taps -->
+<line id="obs-cache"  x1="170" y1="1064" x2="192" y2="980"  stroke="#BA7517" stroke-width="0.6" stroke-dasharray="3 3" fill="none"/>
+<line id="obs-rerank" x1="170" y1="1134" x2="192" y2="1248" stroke="#BA7517" stroke-width="0.6" stroke-dasharray="3 3" fill="none"/>
+<line id="obs-fb"     x1="170" y1="1200" x2="184" y2="1360" stroke="#BA7517" stroke-width="0.6" stroke-dasharray="3 3" fill="none"/>
+
+<!-- ════ UPLOAD FLOW ════ -->
+
+<!-- Admin icon -->
+<g id="icon-admin">
+  <circle cx="88" cy="60" r="14" fill="#FAEEDA" stroke="#EF9F27" stroke-width="0.5"/>
+  <circle cx="88" cy="55" r="5.5" fill="#854F0B"/>
+  <path d="M70 80 Q70 69 88 69 Q106 69 106 80" fill="#854F0B"/>
+</g>
+<text class="th" x="88" y="86" text-anchor="middle" fill="#633806">Admin</text>
+<text class="ts" x="88" y="100" text-anchor="middle" fill="#854F0B">uploads docs</text>
+<line id="ai-down" x1="88" y1="104" x2="88" y2="126" stroke="#BA7517" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+
+<!-- Parser -->
+<g class="node c-amber" id="n-parse">
+  <rect x="26" y="126" width="130" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="91" y="147" text-anchor="middle" dominant-baseline="central">Parser &amp; cleaner</text>
+  <text class="ts" x="91" y="166" text-anchor="middle" dominant-baseline="central">PDF · DOCX · text</text>
+</g>
+<text class="ts" x="91" y="196" text-anchor="middle" fill="#854F0B">async job →</text>
+<line id="ai-q" x1="91" y1="200" x2="202" y2="228" stroke="#BA7517" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#ar)" fill="none"/>
+
+<!-- Job Queue -->
+<g class="node c-amber" id="n-queue">
+  <rect x="192" y="216" width="178" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="281" y="237" text-anchor="middle" dominant-baseline="central">Job queue</text>
+  <text class="ts" x="281" y="256" text-anchor="middle" dominant-baseline="central">SQS / Kafka · batch jobs</text>
+</g>
+<line id="ai-orch-a" x1="281" y1="272" x2="281" y2="296" stroke="#BA7517" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+
+<!-- Ingestion Orchestrator -->
+<g class="node c-coral" id="n-orch">
+  <rect x="192" y="296" width="178" height="96" rx="8" stroke-width="1"/>
+  <text class="th" x="281" y="320" text-anchor="middle" dominant-baseline="central">Ingestion orchestrator</text>
+  <text class="ts" x="281" y="340" text-anchor="middle" dominant-baseline="central">retries · order · batching</text>
+  <text class="ts" x="281" y="358" text-anchor="middle" dominant-baseline="central">versioning · upsert</text>
+  <text class="ts" x="281" y="376" text-anchor="middle" dominant-baseline="central">soft-delete old chunks</text>
+</g>
+
+<line id="ai-todoc"   x1="370" y1="330" x2="438" y2="330" stroke="#BA7517" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+<line id="ai-chunk-a" x1="281" y1="392" x2="281" y2="418" stroke="#BA7517" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+<path id="ai-tometa"  d="M 370 370 L 412 370 L 412 660 L 438 660" fill="none" stroke="#BA7517" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+<path id="ai-kwwrite" d="M 370 350 L 418 350 L 418 612 L 438 612" fill="none" stroke="#BA7517" stroke-width="0.8" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+
+<!-- Doc Store WRITE -->
+<g class="node c-teal" id="n-docstore">
+  <rect x="438" y="306" width="220" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="327" text-anchor="middle" dominant-baseline="central">Raw doc store — write</text>
+  <text class="ts" x="548" y="346" text-anchor="middle" dominant-baseline="central">S3 · file + extracted text</text>
+</g>
+<text class="ts" x="548" y="372" text-anchor="middle" fill="#0F6E56">doc_id + version_id assigned</text>
+
+<!-- Chunker -->
+<g class="node c-amber" id="n-chunk">
+  <rect x="192" y="418" width="178" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="281" y="439" text-anchor="middle" dominant-baseline="central">Chunker</text>
+  <text class="ts" x="281" y="458" text-anchor="middle" dominant-baseline="central">300–500 words · overlap</text>
+</g>
+<line id="ai-emb" x1="281" y1="474" x2="281" y2="498" stroke="#BA7517" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+
+<!-- Embedding model -->
+<g class="node c-purple" id="n-embed-i">
+  <rect x="192" y="498" width="178" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="281" y="519" text-anchor="middle" dominant-baseline="central">Embedding model</text>
+  <text class="ts" x="281" y="538" text-anchor="middle" dominant-baseline="central">chunk → 1536-dim vector</text>
+</g>
+<line id="ai-embcloud" x1="370" y1="526" x2="438" y2="526" stroke="#7F77DD" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#ar)" fill="none"/>
+<text class="ts" x="404" y="520" text-anchor="middle" fill="#534AB7">HTTPS</text>
+
+<!-- Embedding API cloud ingest -->
+<g class="node c-purple" id="n-embed-api">
+  <rect x="438" y="498" width="220" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="519" text-anchor="middle" dominant-baseline="central">Embedding API (cloud)</text>
+  <text class="ts" x="548" y="538" text-anchor="middle" dominant-baseline="central">returns 1536-dim vector</text>
+</g>
+<line id="ai-vecw" x1="548" y1="554" x2="548" y2="574" stroke="#7F77DD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+
+<!-- Vector Index WRITE -->
+<g class="node c-purple" id="n-vecwrite">
+  <rect x="438" y="574" width="220" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="595" text-anchor="middle" dominant-baseline="central">Vector index — write</text>
+  <text class="ts" x="548" y="614" text-anchor="middle" dominant-baseline="central">chunk_id + vector stored</text>
+</g>
+<text class="ts" x="548" y="638" text-anchor="middle" fill="#534AB7">chunk_id → doc_id + version_id</text>
+
+<!-- Keyword Index WRITE -->
+<g class="node c-teal" id="n-kwidxw">
+  <rect x="438" y="648" width="220" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="669" text-anchor="middle" dominant-baseline="central">Keyword index — write</text>
+  <text class="ts" x="548" y="688" text-anchor="middle" dominant-baseline="central">BM25 · Elasticsearch</text>
+</g>
+
+<!-- Metadata DB WRITE -->
+<g class="node c-teal" id="n-metawrite2">
+  <rect x="438" y="720" width="220" height="70" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="744" text-anchor="middle" dominant-baseline="central">Metadata DB — write</text>
+  <text class="ts" x="548" y="763" text-anchor="middle" dominant-baseline="central">doc_id · chunk_id · folder</text>
+  <text class="ts" x="548" y="780" text-anchor="middle" dominant-baseline="central">page · version_id · doc name</text>
+</g>
+<text class="ts" x="548" y="800" text-anchor="middle" fill="#0F6E56">doc_id + chunk_id = core link</text>
+
+<!-- divider -->
+<line x1="18" y1="822" x2="660" y2="822" stroke="rgba(0,0,0,0.08)" stroke-width="0.5" stroke-dasharray="2 6"/>
+<text class="ts" x="340" y="838" text-anchor="middle" fill="#9B9A95">query flow ↓  (real-time)</text>
+
+<!-- ════ QUERY FLOW ════ -->
+
+<!-- API Gateway -->
+<g class="node c-gray" id="n-gw">
+  <rect x="184" y="758" width="242" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="305" y="779" text-anchor="middle" dominant-baseline="central">API gateway</text>
+  <text class="ts" x="305" y="798" text-anchor="middle" dominant-baseline="central">SSL · JWT validation · rate limit</text>
+</g>
+
+<!-- User icon -->
+<g id="icon-user">
+  <circle cx="88" cy="786" r="14" fill="#E6F1FB" stroke="#378ADD" stroke-width="0.5"/>
+  <circle cx="88" cy="781" r="5.5" fill="#185FA5"/>
+  <path d="M70 806 Q70 795 88 795 Q106 795 106 806" fill="#185FA5"/>
+</g>
+<text class="th" x="88" y="812" text-anchor="middle" fill="#0C447C">User</text>
+<text class="ts" x="88" y="826" text-anchor="middle" fill="#185FA5">real-time query</text>
+<line id="qu-gw" x1="152" y1="786" x2="184" y2="786" stroke="#378ADD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+<line id="qu-ac-a" x1="305" y1="814" x2="305" y2="840" stroke="#378ADD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+
+<!-- Access Control -->
+<g class="node c-red" id="n-auth">
+  <rect x="192" y="840" width="242" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="313" y="861" text-anchor="middle" dominant-baseline="central">Access control / scope</text>
+  <text class="ts" x="313" y="880" text-anchor="middle" dominant-baseline="central">role: admin vs user · doc scope</text>
+</g>
+<line id="qu-cache-a" x1="313" y1="896" x2="313" y2="920" stroke="#378ADD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+
+<!-- Semantic Cache -->
+<g class="node c-green" id="n-cache">
+  <rect x="192" y="920" width="242" height="70" rx="8" stroke-width="0.5"/>
+  <text class="th" x="313" y="943" text-anchor="middle" dominant-baseline="central">Semantic cache</text>
+  <text class="ts" x="313" y="962" text-anchor="middle" dominant-baseline="central">Redis · similar query dedup</text>
+  <text class="ts" x="313" y="978" text-anchor="middle" dominant-baseline="central">cache hit → skip to formatter</text>
+</g>
+<text class="ts" x="448" y="944" text-anchor="start" fill="#3B6D11">hit → &lt;100ms</text>
+<text class="ts" x="448" y="958" text-anchor="start" fill="#3B6D11">no LLM call needed</text>
+
+<path id="qu-hit" d="M 434 955 L 444 955 L 444 1468 L 430 1468" fill="none" stroke="#3B6D11" stroke-width="0.8" stroke-dasharray="5 3" marker-end="url(#ar)"/>
+<text class="ts" x="450" y="972" text-anchor="start" fill="#3B6D11">cache hit path</text>
+
+<line id="qu-emb-a" x1="313" y1="990" x2="313" y2="1014" stroke="#378ADD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+
+<!-- Embed query -->
+<g class="node c-purple" id="n-embq">
+  <rect x="192" y="1014" width="234" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="309" y="1035" text-anchor="middle" dominant-baseline="central">Embed query</text>
+  <text class="ts" x="309" y="1054" text-anchor="middle" dominant-baseline="central">same embedding API · HTTPS</text>
+</g>
+<line id="qu-embcloud" x1="426" y1="1042" x2="438" y2="1042" stroke="#7F77DD" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#ar)" fill="none"/>
+<g class="node c-purple" id="n-embed-api-q">
+  <rect x="438" y="1014" width="220" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="1035" text-anchor="middle" dominant-baseline="central">Embedding API (cloud)</text>
+  <text class="ts" x="548" y="1054" text-anchor="middle" dominant-baseline="central">returns query vector</text>
+</g>
+<line id="qu-vsearch-a" x1="309" y1="1070" x2="309" y2="1094" stroke="#7F77DD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+
+<!-- Hybrid search -->
+<g class="node c-purple" id="n-vsearch">
+  <rect x="192" y="1094" width="234" height="70" rx="8" stroke-width="0.5"/>
+  <text class="th" x="309" y="1117" text-anchor="middle" dominant-baseline="central">Hybrid search</text>
+  <text class="ts" x="309" y="1136" text-anchor="middle" dominant-baseline="central">vector + keyword (BM25)</text>
+  <text class="ts" x="309" y="1152" text-anchor="middle" dominant-baseline="central">top-K configurable · tag / folder</text>
+</g>
+<line id="qu-vread"  x1="426" y1="1118" x2="438" y2="1118" stroke="#7F77DD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+<g class="node c-purple" id="n-vecread">
+  <rect x="438" y="1094" width="220" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="1115" text-anchor="middle" dominant-baseline="central">Vector index — search</text>
+  <text class="ts" x="548" y="1134" text-anchor="middle" dominant-baseline="central">chunk_id + similarity score</text>
+</g>
+<line id="qu-kwread" x1="426" y1="1148" x2="438" y2="1160" stroke="#0F6E56" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+<g class="node c-teal" id="n-kwread">
+  <rect x="438" y="1160" width="220" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="1181" text-anchor="middle" dominant-baseline="central">Keyword index — search</text>
+  <text class="ts" x="548" y="1200" text-anchor="middle" dominant-baseline="central">BM25 · exact term match</text>
+</g>
+
+<!-- Metadata DB READ -->
+<line id="qu-metaread-a" x1="309" y1="1164" x2="309" y2="1188" stroke="#0F6E56" stroke-width="0.8" stroke-dasharray="5 3" marker-end="url(#ar)" fill="none"/>
+<g class="node c-teal" id="n-metaread">
+  <rect x="192" y="1188" width="234" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="309" y="1209" text-anchor="middle" dominant-baseline="central">Metadata DB — read</text>
+  <text class="ts" x="309" y="1228" text-anchor="middle" dominant-baseline="central">doc name · page · folder · version</text>
+</g>
+<line id="qu-docread" x1="438" y1="1216" x2="426" y2="1216" stroke="#0F6E56" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+<g class="node c-teal" id="n-docread">
+  <rect x="438" y="1228" width="220" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="1249" text-anchor="middle" dominant-baseline="central">Raw doc store — read</text>
+  <text class="ts" x="548" y="1268" text-anchor="middle" dominant-baseline="central">chunk_id → passage text</text>
+</g>
+
+<!-- Re-ranker -->
+<line id="qu-rerank-a" x1="309" y1="1244" x2="309" y2="1268" stroke="#7F77DD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+<g class="node c-purple" id="n-rerank">
+  <rect x="192" y="1268" width="234" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="309" y="1289" text-anchor="middle" dominant-baseline="central">Re-ranker</text>
+  <text class="ts" x="309" y="1308" text-anchor="middle" dominant-baseline="central">cross-encoder · keep top-3</text>
+</g>
+<text class="ts" x="309" y="1332" text-anchor="middle" fill="#534AB7">reranker score = confidence %</text>
+
+<!-- Confidence threshold -->
+<line id="qu-fb-a" x1="309" y1="1336" x2="309" y2="1358" stroke="#378ADD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+<g class="node c-gray" id="n-fallback">
+  <rect x="192" y="1358" width="234" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="309" y="1379" text-anchor="middle" dominant-baseline="central">Confidence threshold check</text>
+  <text class="ts" x="309" y="1398" text-anchor="middle" dominant-baseline="central">low → fallback · high → LLM</text>
+</g>
+<line id="qu-llm-a" x1="426" y1="1386" x2="438" y2="1386" stroke="#185FA5" stroke-width="1.2" marker-end="url(#ar)" fill="none"/>
+
+<!-- LLM -->
+<g class="node c-blue" id="n-llm">
+  <rect x="438" y="1358" width="220" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="548" y="1379" text-anchor="middle" dominant-baseline="central">LLM API (cloud)</text>
+  <text class="ts" x="548" y="1398" text-anchor="middle" dominant-baseline="central">Claude / GPT-4 · HTTPS</text>
+</g>
+
+<!-- Prompt builder -->
+<line id="qu-ctx-a" x1="309" y1="1414" x2="309" y2="1436" stroke="#378ADD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+<g class="node c-purple" id="n-ctx">
+  <rect x="192" y="1436" width="234" height="70" rx="8" stroke-width="1"/>
+  <text class="th" x="309" y="1459" text-anchor="middle" dominant-baseline="central">Prompt builder</text>
+  <text class="ts" x="309" y="1478" text-anchor="middle" dominant-baseline="central">instructions + guardrails</text>
+  <text class="ts" x="309" y="1494" text-anchor="middle" dominant-baseline="central">context + query → LLM</text>
+</g>
+<line id="qu-llm-b" x1="426" y1="1471" x2="438" y2="1420" stroke="#185FA5" stroke-width="1.5" marker-end="url(#ar)" fill="none"/>
+
+<!-- LLM → formatter -->
+<path id="qu-back" d="M 438 1430 L 400 1430 L 400 1500 L 426 1500" fill="none" stroke="#185FA5" stroke-width="1.5" marker-end="url(#ar)"/>
+<text class="ts" x="406" y="1424" text-anchor="middle" fill="#185FA5">streaming tokens</text>
+
+<!-- Citation + formatter -->
+<g class="node c-blue" id="n-formatter-f">
+  <rect x="184" y="1438" width="234" height="56" rx="8" stroke-width="0.5" style="display:none"/>
+</g>
+<g class="node c-blue" id="n-formatter-real">
+  <rect x="184" y="1506" width="234" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="301" y="1527" text-anchor="middle" dominant-baseline="central">Citation + formatter</text>
+  <text class="ts" x="301" y="1546" text-anchor="middle" dominant-baseline="central">sources · doc name · page · score</text>
+</g>
+<line id="qu-final" x1="301" y1="1562" x2="301" y2="1580" stroke="#378ADD" stroke-width="1" marker-end="url(#ar)" fill="none"/>
+<g class="node c-blue" id="n-ans">
+  <rect x="184" y="1580" width="234" height="36" rx="6" stroke-width="0.5"/>
+  <text class="th" x="301" y="1598" text-anchor="middle" dominant-baseline="central">Answer displayed to user</text>
+</g>
+
+</svg>
+
+  <div class="legend-title">Legend</div>
+  <div class="legend-row">
+    <div class="legend-item">
+      <svg width="28" height="2"><line x1="0" y1="1" x2="28" y2="1" stroke="#BA7517" stroke-width="1.5" marker-end="url(#ar2)"/><defs><marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#BA7517" stroke-width="1.5"/></marker></defs></svg>
+      Upload (async)
+    </div>
+    <div class="legend-item">
+      <svg width="28" height="2"><line x1="0" y1="1" x2="28" y2="1" stroke="#378ADD" stroke-width="1.5"/></svg>
+      Query (real-time)
+    </div>
+    <div class="legend-item">
+      <div class="leg-dash" style="color:#7F77DD;width:28px"></div>
+      Cloud API call (HTTPS)
+    </div>
+    <div class="legend-item">
+      <div class="leg-dash" style="color:#3B6D11;width:28px"></div>
+      Cache hit shortcut
+    </div>
+    <div class="legend-item">
+      <div class="leg-dash" style="color:#BA7517;width:28px"></div>
+      Observability tap
+    </div>
+  </div>
+</div>
+
+<script>
+const iIds=['n-parse','n-queue','n-orch','n-docstore','n-chunk','n-embed-i','n-embed-api',
+            'n-vecwrite','n-kwidxw','n-metawrite2','icon-admin',
+            'ai-down','ai-q','ai-orch-a','ai-todoc','ai-chunk-a','ai-tometa',
+            'ai-emb','ai-embcloud','ai-vecw','ai-kwwrite'];
+const qIds=['n-gw','n-auth','n-cache','n-embq','n-embed-api-q','n-vsearch','n-vecread',
+            'n-kwread','n-metaread','n-docread','n-rerank','n-fallback','n-ctx','n-llm',
+            'n-formatter-real','n-ans','obs1','obs2','obs3','obs4','obs5',
+            'icon-user','qu-gw','qu-ac-a','qu-cache-a','qu-emb-a','qu-embcloud',
+            'qu-vsearch-a','qu-vread','qu-kwread','qu-metaread-a','qu-docread',
+            'qu-rerank-a','qu-fb-a','qu-llm-a','qu-ctx-a','qu-llm-b','qu-back',
+            'qu-final','qu-hit','obs-cache','obs-rerank','obs-fb'];
+
+function show(m){
+  document.getElementById('tb').className='tog'+(m==='both'?' b':'');
+  document.getElementById('ta').className='tog'+(m==='ingest'?' a':'');
+  document.getElementById('tq').className='tog'+(m==='query'?' q':'');
+  [...iIds,...qIds].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    if(m==='both')el.style.opacity='1';
+    else if(m==='ingest')el.style.opacity=iIds.includes(id)?'1':'0.1';
+    else el.style.opacity=qIds.includes(id)?'1':'0.1';
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KnowledgeAI</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F5F4F0;
+  --surface: #FFFFFF;
+  --border: rgba(0,0,0,0.1);
+  --text: #1A1A18;
+  --muted: #6B6A65;
+  --amber: #EF9F27;
+  --amber-bg: #FAEEDA;
+  --amber-dark: #633806;
+  --blue: #378ADD;
+  --blue-bg: #E6F1FB;
+  --blue-dark: #0C447C;
+  --green: #5DCAA5;
+  --green-bg: #E1F5EE;
+  --green-dark: #085041;
+  --purple: #AFA9EC;
+  --purple-bg: #EEEDFE;
+  --purple-dark: #3C3489;
+  --red: #F09595;
+  --red-bg: #FCEBEB;
+  --teal-bg: #E1F5EE;
+  --nav-h: 52px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── NAV ─────────────────────────────────────────────────────────── */
+nav {
+  height: var(--nav-h);
+  background: var(--surface);
+  border-bottom: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  gap: 1.5rem;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.nav-brand {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-right: 0.5rem;
+}
+.nav-brand .dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--amber);
+}
+.nav-tabs {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+}
+.nav-tab {
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+  font-family: inherit;
+}
+.nav-tab:hover { background: var(--bg); }
+.nav-tab.active { background: var(--amber-bg); color: var(--amber-dark); }
+
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #ccc;
+}
+.status-dot.ok { background: #5DCAA5; }
+
+/* ── LAYOUT ──────────────────────────────────────────────────────── */
+.app-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR ─────────────────────────────────────────────────────── */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 0.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 1rem 0;
+}
+.sidebar-section {
+  padding: 0 0.75rem;
+  margin-bottom: 1rem;
+}
+.sidebar-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 0.4rem;
+  padding: 0 0.25rem;
+}
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text);
+  transition: background .12s;
+  user-select: none;
+}
+.tree-item:hover { background: var(--bg); }
+.tree-item.active { background: var(--amber-bg); color: var(--amber-dark); font-weight: 500; }
+.tree-item .icon { font-size: 14px; width: 18px; text-align: center; }
+.tree-children { padding-left: 16px; }
+.tree-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: background .12s;
+}
+.tree-child:hover { background: var(--bg); color: var(--text); }
+.tree-child.active { background: var(--blue-bg); color: var(--blue-dark); }
+.tree-child .badge {
+  margin-left: auto;
+  font-size: 10px;
+  background: var(--bg);
+  color: var(--muted);
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+.sidebar-stats {
+  margin-top: auto;
+  padding: 0.75rem;
+  border-top: 0.5px solid var(--border);
+}
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+.stat-row span:last-child { color: var(--text); font-weight: 500; }
+
+/* ── MAIN CONTENT ─────────────────────────────────────────────────── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Tabs content */
+.tab-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.tab-panel.active { display: flex; }
+
+/* ══ ASK TAB ══ */
+.ask-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.query-box {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.query-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.6rem;
+}
+.query-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.mode-select {
+  margin-left: auto;
+  display: flex;
+  gap: 4px;
+}
+.mode-btn {
+  padding: 3px 10px;
+  border-radius: 5px;
+  border: 0.5px solid var(--border);
+  background: var(--bg);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .12s;
+}
+.mode-btn:hover { background: var(--surface); }
+.mode-btn.active { background: var(--blue-bg); color: var(--blue-dark); border-color: var(--blue); }
+
+.query-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+#query-input {
+  flex: 1;
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--text);
+  resize: none;
+  outline: none;
+  min-height: 40px;
+  max-height: 120px;
+  line-height: 1.5;
+  transition: border-color .15s;
+}
+#query-input:focus { border-color: var(--blue); background: #fff; }
+.send-btn {
+  padding: 9px 18px;
+  background: var(--amber);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity .15s;
+  white-space: nowrap;
+}
+.send-btn:hover { opacity: 0.88; }
+.send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Answer card */
+.answer-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.answer-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+.answer-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.confidence-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.confidence-label { font-size: 11.5px; color: var(--muted); }
+.confidence-bar {
+  width: 80px;
+  height: 5px;
+  background: var(--bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.confidence-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--green);
+  transition: width .5s ease;
+}
+.cache-badge {
+  padding: 2px 8px;
+  background: var(--green-bg);
+  color: var(--green-dark);
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+.latency-badge {
+  padding: 2px 8px;
+  background: var(--bg);
+  color: var(--muted);
+  border-radius: 4px;
+  font-size: 10.5px;
+}
+
+.answer-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.answer-text.streaming::after {
+  content: "▋";
+  animation: blink .7s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.sources-section { margin-top: 1rem; }
+.sources-title { font-size: 11.5px; font-weight: 600; color: var(--muted); margin-bottom: 0.4rem; }
+.source-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.source-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: var(--blue-bg);
+  border: 0.5px solid #85B7EB;
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: var(--blue-dark);
+  cursor: default;
+}
+.source-pill .score {
+  font-size: 10px;
+  background: var(--blue-dark);
+  color: #fff;
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
+.answer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 0.5px solid var(--border);
+}
+.action-btn {
+  padding: 4px 12px;
+  border-radius: 5px;
+  border: 0.5px solid var(--border);
+  background: var(--bg);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .12s;
+}
+.action-btn:hover { background: var(--surface); color: var(--text); }
+.action-btn.voted { background: var(--green-bg); color: var(--green-dark); border-color: var(--green); }
+
+/* ── SCREENSHOTS GALLERY ──────────────────────────────────────── */
+.screenshots-section {
+  margin-top: 1rem;
+  border-top: 0.5px solid var(--border);
+  padding-top: 0.75rem;
+}
+.screenshots-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.screenshots-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.screenshot-thumb {
+  position: relative;
+  border: 0.5px solid var(--border);
+  border-radius: 7px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+  background: var(--bg);
+}
+.screenshot-thumb:hover {
+  border-color: var(--amber);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.screenshot-thumb img {
+  display: block;
+  width: 160px;
+  height: 110px;
+  object-fit: cover;
+  object-position: top;
+}
+.screenshot-label {
+  font-size: 10px;
+  color: var(--muted);
+  padding: 3px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+/* Lightbox overlay */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.82);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+.lightbox-caption {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 12px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  pointer-events: none;
+}
+.lightbox-close {
+  position: fixed;
+  top: 1rem;
+  right: 1.25rem;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  background: rgba(0,0,0,0.4);
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s;
+}
+.lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+.follow-ups { margin-top: 0.75rem; }
+.follow-up-label { font-size: 11.5px; color: var(--muted); margin-bottom: 0.35rem; }
+.follow-up-btns { display: flex; flex-wrap: wrap; gap: 5px; }
+.follow-up-btn {
+  padding: 4px 11px;
+  border-radius: 6px;
+  border: 0.5px solid var(--border);
+  background: var(--surface);
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .12s;
+}
+.follow-up-btn:hover { background: var(--amber-bg); border-color: var(--amber); }
+
+/* Welcome / empty state */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  gap: 8px;
+  text-align: center;
+}
+.empty-icon { font-size: 40px; }
+.empty-title { font-size: 15px; font-weight: 600; color: var(--text); }
+.empty-sub { font-size: 13px; max-width: 320px; }
+
+/* Loading dots */
+.loading-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+.loading-dots span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--amber);
+  animation: ldot .9s ease-in-out infinite;
+}
+.loading-dots span:nth-child(2) { animation-delay: .15s; }
+.loading-dots span:nth-child(3) { animation-delay: .30s; }
+@keyframes ldot { 0%,80%,100%{transform:scale(.6);opacity:.4} 40%{transform:scale(1);opacity:1} }
+
+/* ══ KNOWLEDGE BASE TAB ══ */
+.kb-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+}
+.kb-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+.kb-title { font-size: 15px; font-weight: 600; }
+.view-toggle { display:flex; gap:4px; }
+.view-toggle button {
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+}
+.view-toggle button.active {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+/* Folder view */
+.folder-view { font-size: 13px; }
+.folder-group { margin-bottom: 6px; border: 0.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+.folder-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface);
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  font-size: 13px;
+}
+.folder-row:hover { background: var(--hover); }
+.folder-arrow { font-size: 10px; transition: transform .2s; color: var(--muted); }
+.folder-arrow.open { transform: rotate(90deg); }
+.folder-icon { font-size: 15px; }
+.folder-name { flex: 1; }
+.folder-count { font-size: 11px; color: var(--muted); font-weight: 400; }
+.folder-children { display: none; }
+.folder-children.open { display: block; }
+.folder-doc-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 32px;
+  border-top: 0.5px solid var(--border);
+  font-size: 12px;
+}
+.folder-doc-row:hover { background: var(--hover); }
+.folder-doc-name { flex: 1; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.folder-doc-meta { color: var(--muted); font-size: 11px; white-space: nowrap; }
+.search-box {
+  flex: 1;
+  padding: 6px 12px;
+  border: 0.5px solid var(--border);
+  border-radius: 7px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--surface);
+  outline: none;
+  color: var(--text);
+}
+.search-box:focus { border-color: var(--blue); }
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.doc-table th {
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  border-bottom: 0.5px solid var(--border);
+}
+.doc-table td {
+  padding: 8px 10px;
+  border-bottom: 0.5px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+}
+.doc-table tr:hover td { background: var(--bg); }
+.file-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.type-pdf  { background: var(--red-bg);    color: #791F1F; }
+.type-docx { background: var(--blue-bg);   color: var(--blue-dark); }
+.type-txt  { background: var(--bg);        color: var(--muted); }
+.type-md   { background: var(--purple-bg); color: var(--purple-dark); }
+
+.del-btn {
+  padding: 3px 9px;
+  border-radius: 5px;
+  border: 0.5px solid var(--border);
+  background: transparent;
+  font-size: 11px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .12s;
+}
+.del-btn:hover { background: var(--red-bg); color: #791F1F; border-color: var(--red); }
+
+/* ══ UPLOAD TAB ══ */
+.upload-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 640px;
+}
+.drop-zone {
+  border: 1.5px dashed var(--border);
+  border-radius: 12px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--amber);
+  background: var(--amber-bg);
+}
+.drop-icon { font-size: 36px; margin-bottom: 0.5rem; }
+.drop-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+.drop-sub   { font-size: 12.5px; color: var(--muted); }
+#file-input { display: none; }
+
+.upload-queue {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.upload-queue-header {
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  border-bottom: 0.5px solid var(--border);
+}
+.upload-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 0.5px solid var(--border);
+  font-size: 13px;
+}
+.upload-item:last-child { border-bottom: none; }
+.upload-item .fname { flex: 1; font-weight: 500; }
+.upload-item .fsize { font-size: 11.5px; color: var(--muted); }
+.upload-status {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.upload-status.queued   { background: var(--amber-bg); color: var(--amber-dark); }
+.upload-status.done     { background: var(--green-bg); color: var(--green-dark); }
+.upload-status.error    { background: var(--red-bg);   color: #791F1F; }
+
+.upload-actions { display: flex; gap: 8px; }
+.primary-btn {
+  padding: 8px 20px;
+  background: var(--amber);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity .15s;
+}
+.primary-btn:hover { opacity: 0.88; }
+.primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.secondary-btn {
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .12s;
+}
+.secondary-btn:hover { background: var(--bg); }
+
+/* ══ ANALYTICS TAB ══ */
+.analytics-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  align-content: start;
+}
+.stat-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+.stat-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 0.35rem;
+}
+.stat-card-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+}
+.stat-card-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+.analytics-full {
+  grid-column: 1 / -1;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+.analytics-full-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 0.75rem;
+}
+.top-query-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 0.5px solid var(--border);
+  font-size: 13px;
+}
+.top-query-row:last-child { border-bottom: none; }
+.top-query-cnt {
+  font-size: 11px;
+  background: var(--bg);
+  color: var(--muted);
+  border-radius: 10px;
+  padding: 1px 8px;
+  margin-left: auto;
+}
+
+/* ══ SETTINGS TAB ══ */
+.settings-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.settings-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+.settings-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 0.5px solid var(--border);
+}
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.6rem;
+  font-size: 13px;
+}
+.setting-row label { width: 160px; color: var(--muted); flex-shrink: 0; }
+.setting-row input, .setting-row select {
+  flex: 1;
+  padding: 5px 9px;
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+}
+.setting-row input:focus, .setting-row select:focus { border-color: var(--blue); }
+.save-btn {
+  padding: 7px 18px;
+  background: var(--amber);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity .15s;
+}
+.save-btn:hover { opacity: 0.88; }
+
+/* ── STAT STRIP ───────────────────────────────────────────────────── */
+.stat-strip {
+  height: 30px;
+  background: var(--surface);
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  gap: 1.25rem;
+  font-size: 11.5px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.stat-strip .pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.stat-strip .pill strong { color: var(--text); }
+
+/* ── Toggle switch ───────────────────────────────────────────────── */
+.toggle-row { display:flex; align-items:center; gap:10px; font-size:13px; margin-bottom:.5rem; }
+.toggle-row label { color:var(--muted); width:160px; flex-shrink:0; }
+.switch { position:relative; display:inline-block; width:38px; height:22px; }
+.switch input { opacity:0; width:0; height:0; }
+.slider { position:absolute; cursor:pointer; top:0;left:0;right:0;bottom:0;
+  background:#ccc; border-radius:22px; transition:.3s; }
+.slider:before { position:absolute; content:""; height:16px; width:16px; left:3px; bottom:3px;
+  background:white; border-radius:50%; transition:.3s; }
+input:checked + .slider { background:var(--green); }
+input:checked + .slider:before { transform:translateX(16px); }
+
+/* ── History / FAQ panels ────────────────────────────────────────── */
+.list-area { flex:1; overflow-y:auto; padding:1.25rem; display:flex; flex-direction:column; gap:.75rem; }
+.list-header { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.list-header h2 { font-size:15px; font-weight:600; }
+.history-card { background:var(--surface); border:0.5px solid var(--border); border-radius:10px; padding:1rem 1.25rem; }
+.history-q { font-size:13px; font-weight:600; color:var(--text); margin-bottom:.35rem; }
+.history-a { font-size:12.5px; color:var(--muted); line-height:1.6; white-space:pre-wrap; word-break:break-word; max-height:120px; overflow:hidden; }
+.history-a.expanded { max-height:none; }
+.history-meta { display:flex; align-items:center; gap:8px; margin-top:.5rem; flex-wrap:wrap; }
+.hbadge { font-size:10.5px; padding:2px 7px; border-radius:4px; }
+.hbadge.source-ui    { background:var(--blue-bg); color:var(--blue-dark); }
+.hbadge.source-excel { background:var(--green-bg); color:var(--green-dark); }
+.hbadge.source-api   { background:var(--purple-bg); color:var(--purple-dark); }
+.hbadge.is-faq       { background:var(--amber-bg); color:var(--amber-dark); }
+.history-actions { display:flex; gap:6px; margin-top:.5rem; }
+.tiny-btn { padding:3px 10px; border-radius:5px; border:0.5px solid var(--border);
+  background:var(--bg); font-size:11px; color:var(--muted); cursor:pointer; font-family:inherit; }
+.tiny-btn:hover { background:var(--surface); color:var(--text); }
+.tiny-btn.promote { background:var(--amber-bg); color:var(--amber-dark); border-color:var(--amber); }
+.faq-card { background:var(--surface); border:0.5px solid var(--amber); border-radius:10px; padding:1rem 1.25rem; }
+.faq-q { font-size:13px; font-weight:600; color:var(--amber-dark); margin-bottom:.35rem; }
+.faq-a { font-size:12.5px; color:var(--text); line-height:1.6; white-space:pre-wrap; word-break:break-word; }
+
+/* ── Excel Q&A panel ─────────────────────────────────────────────── */
+.excel-area { flex:1; overflow-y:auto; padding:1.5rem; display:flex; flex-direction:column; gap:1rem; max-width:680px; }
+.excel-result-row { display:flex; align-items:center; gap:8px; font-size:12.5px; padding:5px 0; border-bottom:0.5px solid var(--border); }
+.excel-result-row:last-child { border-bottom:none; }
+.excel-result-row .rnum { width:40px; color:var(--muted); text-align:right; flex-shrink:0; }
+.excel-result-row .rq   { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.excel-result-row .rok  { color:var(--green-dark); font-weight:600; }
+.excel-result-row .rfail{ color:#791F1F; }
+
+/* ── Toast ────────────────────────────────────────────────────────── */
+#toast {
+  position: fixed;
+  bottom: 40px;
+  right: 20px;
+  background: var(--text);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity .3s;
+  pointer-events: none;
+  z-index: 9999;
+}
+#toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="dot"></div>
+    KnowledgeAI
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('ask')">Ask a Question</button>
+    <button class="nav-tab" onclick="switchTab('kb')">Knowledge Base</button>
+    <button class="nav-tab" onclick="switchTab('upload')">Upload Docs</button>
+    <button class="nav-tab" onclick="switchTab('excel')">Excel Q&amp;A</button>
+    <button class="nav-tab" onclick="switchTab('history')">History</button>
+    <button class="nav-tab" onclick="switchTab('faq')">FAQ</button>
+    <button class="nav-tab" onclick="switchTab('analytics')">Analytics</button>
+    <button class="nav-tab" onclick="switchTab('settings')">Settings</button>
+  </div>
+  <div class="nav-status">
+    <div class="status-dot" id="status-dot"></div>
+    <span id="status-text">Connecting…</span>
+  </div>
+</nav>
+
+<div class="app-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Knowledge Scope</div>
+      <div class="tree-item active" onclick="setScope('all')">
+        <span class="icon">🗂</span> All Documents
+      </div>
+      <div class="tree-item" onclick="toggleFolder('brd')">
+        <span class="icon">📁</span> BRDs
+        <span style="margin-left:auto;font-size:10px;color:var(--muted)">▾</span>
+      </div>
+      <div class="tree-children" id="brd-children">
+        <div class="tree-child active" onclick="setScope('BRDs')">
+          <span>📄</span> All BRDs
+          <span class="badge" id="brd-count">–</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Quick Actions</div>
+      <div class="tree-item" onclick="switchTab('upload')">
+        <span class="icon">⬆</span> Upload Files
+      </div>
+      <div class="tree-item" onclick="rescanFolder()">
+        <span class="icon">🔄</span> Re-scan BRDs
+      </div>
+    </div>
+
+    <div class="sidebar-stats" id="sidebar-stats">
+      <div class="stat-row"><span>Documents</span><span id="ss-docs">–</span></div>
+      <div class="stat-row"><span>Chunks</span><span id="ss-chunks">–</span></div>
+      <div class="stat-row"><span>Queries</span><span id="ss-queries">–</span></div>
+      <div class="stat-row"><span>Cache hit</span><span id="ss-cache">–</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ── ASK ── -->
+    <div class="tab-panel active" id="tab-ask">
+      <div class="ask-area" id="ask-area">
+
+        <div class="query-box">
+          <div class="query-header">
+            <span class="query-label">Ask your Knowledge Base</span>
+            <div class="mode-select">
+              <button class="mode-btn" onclick="setMode('precise')">Precise</button>
+              <button class="mode-btn active" onclick="setMode('balanced')">Balanced</button>
+              <button class="mode-btn" onclick="setMode('exploratory')">Exploratory</button>
+            </div>
+            <select id="model-select" style="font-size:12px;padding:4px 8px;border:0.5px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;">
+              <optgroup label="OpenAI">
+                <option value="gpt-4o">GPT-4o</option>
+                <option value="gpt-4o-mini">GPT-4o Mini</option>
+                <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+              </optgroup>
+              <optgroup label="Google Gemini">
+                <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+              </optgroup>
+              <optgroup label="Anthropic">
+                <option value="claude-opus-4-6">Claude Opus 4.6</option>
+                <option value="claude-sonnet-4-6">Claude Sonnet 4.6</option>
+                <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="query-input-row">
+            <textarea id="query-input" rows="2"
+              placeholder="e.g. What are the acceptance criteria for the payment module?"
+              onkeydown="handleKey(event)"></textarea>
+            <button class="send-btn" id="send-btn" onclick="submitQuery()">Ask →</button>
+          </div>
+        </div>
+
+        <div id="answer-area">
+          <div class="empty-state" id="empty-state">
+            <div class="empty-icon">💡</div>
+            <div class="empty-title">Ready to answer your questions</div>
+            <div class="empty-sub">Type a question above. Answers are grounded in your uploaded BRD documents with source citations.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── KNOWLEDGE BASE ── -->
+    <div class="tab-panel" id="tab-kb">
+      <div class="kb-area">
+        <div class="kb-header">
+          <span class="kb-title">Knowledge Base</span>
+          <input class="search-box" id="kb-search" placeholder="Search documents…" oninput="filterDocs()"/>
+          <div class="view-toggle">
+            <button id="view-linear-btn" class="active" onclick="setKbView('linear')">≡ List</button>
+            <button id="view-folder-btn" onclick="setKbView('folder')">📁 Folders</button>
+          </div>
+          <button class="secondary-btn" onclick="loadDocuments()">Refresh</button>
+        </div>
+        <table class="doc-table" id="doc-table">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Type</th>
+              <th>Folder</th>
+              <th>Pages</th>
+              <th>Version</th>
+              <th>Updated</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="doc-tbody">
+            <tr><td colspan="7" style="color:var(--muted);padding:1rem">Loading…</td></tr>
+          </tbody>
+        </table>
+        <div class="folder-view" id="folder-view" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- ── UPLOAD ── -->
+    <div class="tab-panel" id="tab-upload">
+      <div class="upload-area">
+        <div class="drop-zone" id="drop-zone"
+             onclick="document.getElementById('file-input').click()"
+             ondragover="dragOver(event)" ondragleave="dragLeave(event)"
+             ondrop="dropFiles(event)">
+          <div class="drop-icon">📤</div>
+          <div class="drop-title">Drop files here or click to browse</div>
+          <div class="drop-sub">Supports PDF, DOCX, TXT, MD — files will be auto-ingested into BRDs</div>
+        </div>
+        <input type="file" id="file-input" multiple accept=".pdf,.docx,.doc,.txt,.md"
+               onchange="filesSelected(event)"/>
+
+        <div class="upload-queue" id="upload-queue" style="display:none">
+          <div class="upload-queue-header">Upload Queue</div>
+          <div id="upload-queue-items"></div>
+        </div>
+
+        <div class="upload-actions">
+          <button class="primary-btn" id="upload-btn" onclick="uploadFiles()" disabled>Upload & Ingest</button>
+          <button class="secondary-btn" onclick="clearQueue()">Clear</button>
+        </div>
+
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:10px;padding:1rem 1.25rem;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:0.5rem;">Auto-Watch</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">
+            The server automatically watches the <strong>BRDs/</strong> folder. Any file you copy there will be ingested within seconds — no manual upload needed.
+            <br/><br/>
+            <button class="secondary-btn" onclick="rescanFolder()">🔄 Trigger Re-scan Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EXCEL Q&A ── -->
+    <div class="tab-panel" id="tab-excel">
+      <div class="excel-area">
+        <div style="font-size:15px;font-weight:600">Excel Batch Q&amp;A</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6">
+          Upload an Excel file with questions. KnowledgeAI will answer each question and write the answers back into a new column. The updated file is saved to your <strong>BRDs folder</strong>.
+        </div>
+        <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:10px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:.75rem;">
+          <div class="setting-row">
+            <label>Question Column</label>
+            <input type="text" id="xls-qcol" value="B" style="width:60px;flex:none"/>
+            <span style="font-size:12px;color:var(--muted);margin-left:4px">Excel column letter containing questions</span>
+          </div>
+          <div class="setting-row">
+            <label>Answer Column</label>
+            <input type="text" id="xls-acol" value="E" style="width:60px;flex:none"/>
+            <span style="font-size:12px;color:var(--muted);margin-left:4px">Column where answers will be written</span>
+          </div>
+          <div class="setting-row">
+            <label>Answer Mode</label>
+            <select id="xls-mode">
+              <option value="balanced">Balanced</option>
+              <option value="precise">Precise</option>
+              <option value="exploratory">Exploratory</option>
+            </select>
+          </div>
+        </div>
+        <div class="drop-zone" id="xls-drop"
+             onclick="document.getElementById('xls-input').click()"
+             ondragover="dragOver(event)" ondragleave="dragLeave(event)"
+             ondrop="xlsDrop(event)">
+          <div class="drop-icon">📊</div>
+          <div class="drop-title">Drop Excel file here or click to browse</div>
+          <div class="drop-sub">Accepts .xlsx files with questions in the specified column</div>
+        </div>
+        <input type="file" id="xls-input" accept=".xlsx" style="display:none" onchange="xlsSelected(event)"/>
+        <div id="xls-file-info" style="display:none;font-size:13px;color:var(--text);background:var(--surface);padding:.75rem 1rem;border-radius:8px;border:0.5px solid var(--border)"></div>
+        <button class="primary-btn" id="xls-run-btn" onclick="runExcelQA()" disabled>Run Q&amp;A →</button>
+        <div id="xls-progress" style="display:none">
+          <div class="loading-dots"><span></span><span></span><span></span></div>
+          <div style="font-size:13px;color:var(--muted);margin-top:.5rem">Processing questions… this may take a few minutes.</div>
+        </div>
+        <div id="xls-results" style="display:none;background:var(--surface);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;">
+          <div style="padding:.75rem 1rem;font-size:12px;font-weight:600;color:var(--muted);border-bottom:0.5px solid var(--border)">Results</div>
+          <div id="xls-result-rows" style="padding:.5rem 1rem;max-height:300px;overflow-y:auto;"></div>
+          <div id="xls-result-summary" style="padding:.75rem 1rem;font-size:13px;color:var(--green-dark);border-top:0.5px solid var(--border);font-weight:500"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HISTORY ── -->
+    <div class="tab-panel" id="tab-history">
+      <div class="list-area">
+        <div class="list-header">
+          <h2>Q&amp;A History</h2>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+            <span id="hist-enabled-badge" style="font-size:11.5px;padding:2px 8px;border-radius:4px;background:var(--green-bg);color:var(--green-dark)">● Recording ON</span>
+            <select id="hist-filter" onchange="loadHistory()" style="font-size:12px;padding:4px 8px;border:0.5px solid var(--border);border-radius:6px;background:var(--surface);font-family:inherit">
+              <option value="">All sources</option>
+              <option value="ui">UI queries</option>
+              <option value="excel">Excel batch</option>
+            </select>
+            <button class="secondary-btn" onclick="loadHistory()">Refresh</button>
+          </div>
+        </div>
+        <div id="history-list">
+          <div style="color:var(--muted);font-size:13px">Loading history…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FAQ ── -->
+    <div class="tab-panel" id="tab-faq">
+      <div class="list-area">
+        <div class="list-header">
+          <h2>FAQ Library</h2>
+          <span style="font-size:12px;color:var(--muted);flex:1;margin-left:8px">Promoted from History. Served instantly — no LLM call.</span>
+          <button class="secondary-btn" onclick="loadFAQs()">Refresh</button>
+        </div>
+        <div style="font-size:13px;color:var(--muted);background:var(--amber-bg);border:0.5px solid var(--amber);border-radius:8px;padding:.75rem 1rem;">
+          💡 To promote a Q&amp;A to FAQ: go to <strong>History</strong>, find the answer you're satisfied with, and click <strong>Add to FAQ</strong>.
+        </div>
+        <div id="faq-list">
+          <div style="color:var(--muted);font-size:13px">Loading FAQs…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ANALYTICS ── -->
+    <div class="tab-panel" id="tab-analytics">
+      <div class="analytics-area" id="analytics-area">
+        <div class="stat-card">
+          <div class="stat-card-label">Documents</div>
+          <div class="stat-card-value" id="a-docs">–</div>
+          <div class="stat-card-sub">active in knowledge base</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Chunks</div>
+          <div class="stat-card-value" id="a-chunks">–</div>
+          <div class="stat-card-sub">indexed passages</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Total Queries</div>
+          <div class="stat-card-value" id="a-queries">–</div>
+          <div class="stat-card-sub">since startup</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Cache Hit Rate</div>
+          <div class="stat-card-value" id="a-cache">–</div>
+          <div class="stat-card-sub">semantic dedup</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Avg Confidence</div>
+          <div class="stat-card-value" id="a-conf">–</div>
+          <div class="stat-card-sub">reranker score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Avg Latency</div>
+          <div class="stat-card-value" id="a-lat">–</div>
+          <div class="stat-card-sub">end-to-end ms</div>
+        </div>
+
+        <div class="analytics-full">
+          <div class="analytics-full-title">Top Queries</div>
+          <div id="top-queries-list">
+            <div style="color:var(--muted);font-size:13px">No queries yet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="tab-panel" id="tab-settings">
+      <div class="settings-area">
+        <div class="settings-card">
+          <div class="settings-card-title">LLM Configuration</div>
+          <div class="setting-row">
+            <label>Model</label>
+            <select id="s-model">
+              <option value="gpt-4o">gpt-4o</option>
+              <option value="gpt-4o-mini">gpt-4o-mini</option>
+              <option value="gpt-4-turbo">gpt-4-turbo</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <label>Embedding Model</label>
+            <select id="s-embed">
+              <option value="text-embedding-3-small">text-embedding-3-small</option>
+              <option value="text-embedding-3-large">text-embedding-3-large</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-title">Chunking & Retrieval</div>
+          <div class="setting-row">
+            <label>Chunk Size (words)</label>
+            <input type="number" id="s-chunk" value="400"/>
+          </div>
+          <div class="setting-row">
+            <label>Chunk Overlap</label>
+            <input type="number" id="s-overlap" value="50"/>
+          </div>
+          <div class="setting-row">
+            <label>Top-K Candidates</label>
+            <input type="number" id="s-topk" value="10"/>
+          </div>
+          <div class="setting-row">
+            <label>Re-rank Top-N</label>
+            <input type="number" id="s-rerank" value="3"/>
+          </div>
+          <div class="setting-row">
+            <label>Confidence Threshold</label>
+            <input type="number" id="s-conf" step="0.01" value="0.35"/>
+          </div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-title">Cache</div>
+          <div class="setting-row">
+            <label>Max Cache Size</label>
+            <input type="number" id="s-cachesize" value="500"/>
+          </div>
+          <div class="setting-row">
+            <label>Similarity Threshold</label>
+            <input type="number" id="s-cachesim" step="0.01" value="0.92"/>
+          </div>
+        </div>
+        <div class="settings-card">
+          <div class="settings-card-title">Q&amp;A History &amp; FAQ</div>
+          <div class="toggle-row">
+            <label>Save Q&amp;A History</label>
+            <label class="switch">
+              <input type="checkbox" id="s-history" checked onchange="toggleHistory(this)"/>
+              <span class="slider"></span>
+            </label>
+            <span id="s-history-label" style="font-size:12px;color:var(--green-dark)">ON — all queries are recorded</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:.25rem;line-height:1.5">
+            When ON, every question and answer (including Excel batch) is stored in the History tab.<br/>
+            Promote any answer to the FAQ library for instant retrieval without LLM calls.
+          </div>
+        </div>
+        <button class="save-btn" onclick="showToast('Settings saved (restart server to apply)')">Save Settings</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- STAT STRIP -->
+<div class="stat-strip">
+  <div class="pill">Docs: <strong id="strip-docs">–</strong></div>
+  <div class="pill">Chunks: <strong id="strip-chunks">–</strong></div>
+  <div class="pill">Vectors: <strong id="strip-vectors">–</strong></div>
+  <div class="pill">Cache: <strong id="strip-cache">–</strong></div>
+  <div class="pill" style="margin-left:auto;color:var(--muted)">KnowledgeAI v1.0 · BRD RAG System</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = '';   // same-origin
+
+// ── Tab switching ──────────────────────────────────────────────────────────
+function switchTab(name) {
+  const tabs = ['ask','kb','upload','excel','history','faq','analytics','settings'];
+  document.querySelectorAll('.nav-tab').forEach((t,i) => {
+    t.classList.toggle('active', tabs[i] === name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'tab-' + name);
+  });
+  if (name === 'kb')        loadDocuments();
+  if (name === 'analytics') loadAnalytics();
+  if (name === 'history')   loadHistory();
+  if (name === 'faq')       loadFAQs();
+}
+
+// ── Mode ──────────────────────────────────────────────────────────────────
+let currentMode = 'balanced';
+function setMode(m) {
+  currentMode = m;
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase() === m);
+  });
+}
+
+// ── Scope ─────────────────────────────────────────────────────────────────
+let currentScope = 'all';
+function setScope(s) {
+  currentScope = s;
+  document.querySelectorAll('.tree-item, .tree-child').forEach(el => {
+    el.classList.remove('active');
+  });
+}
+function toggleFolder(id) {
+  const ch = document.getElementById(id + '-children');
+  ch.style.display = ch.style.display === 'none' ? '' : 'none';
+}
+
+// ── Query submission (WebSocket streaming) ─────────────────────────────────
+let ws = null;
+let currentQueryId = null;
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitQuery(); }
+}
+
+function submitQuery() {
+  const q = document.getElementById('query-input').value.trim();
+  if (!q) return;
+
+  document.getElementById('send-btn').disabled = true;
+  document.getElementById('empty-state')?.remove();
+
+  // Show loading card
+  const card = renderAnswerCard(q);
+  document.getElementById('answer-area').prepend(card);
+
+  const WS_URL = `ws://${location.host}/ws/query`;
+  if (ws) { try { ws.close(); } catch(e){} }
+  ws = new WebSocket(WS_URL);
+
+  ws.onopen = () => {
+    const model = document.getElementById('model-select').value;
+    ws.send(JSON.stringify({ query: q, mode: currentMode, model }));
+  };
+
+  ws.onmessage = (evt) => {
+    const msg = JSON.parse(evt.data);
+    handleWsMessage(msg, card, q);
+  };
+
+  ws.onerror = (e) => {
+    showError(card, 'WebSocket error. Falling back to REST API…');
+    fetchQuery(q, card);
+  };
+}
+
+function handleWsMessage(msg, card, query) {
+  const textEl = card.querySelector('.answer-text');
+  const metaEl = card.querySelector('.answer-meta');
+
+  if (msg.type === 'sources') {
+    renderSources(card, msg.data.sources, msg.data.confidence);
+  }
+  else if (msg.type === 'images') {
+    renderImages(card, msg.data);
+  }
+  else if (msg.type === 'token') {
+    textEl.classList.add('streaming');
+    textEl.textContent += msg.token;
+  }
+  else if (msg.type === 'cached') {
+    textEl.textContent = msg.data.answer;
+    renderSources(card, msg.data.sources, msg.data.confidence);
+    addCacheBadge(card);
+    finalise(card);
+  }
+  else if (msg.type === 'done') {
+    textEl.classList.remove('streaming');
+    addLatencyBadge(card, msg.latency_ms);
+    finalise(card);
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('query-input').value = '';
+  }
+  else if (msg.type === 'error') {
+    showError(card, msg.message);
+    document.getElementById('send-btn').disabled = false;
+  }
+}
+
+async function fetchQuery(q, card) {
+  try {
+    const res = await fetch(`${API}/api/query`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ query: q, mode: currentMode, model: document.getElementById('model-select').value }),
+    });
+    const data = await res.json();
+    const textEl = card.querySelector('.answer-text');
+    textEl.textContent = data.answer;
+    renderSources(card, data.sources, data.confidence);
+    if (data.images && data.images.length) renderImages(card, data.images);
+    if (data.cache_hit) addCacheBadge(card);
+    addLatencyBadge(card, data.latency_ms);
+    renderFollowUps(card, data.follow_ups || []);
+    finalise(card);
+  } catch(e) {
+    showError(card, 'Request failed: ' + e.message);
+  } finally {
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('query-input').value = '';
+  }
+}
+
+function renderAnswerCard(query) {
+  const card = document.createElement('div');
+  card.className = 'answer-card';
+  const model = document.getElementById('model-select').value;
+  card.innerHTML = `
+    <div class="answer-meta">
+      <span class="answer-label">Answer</span>
+      <span style="font-size:12px;color:var(--muted);flex:1;margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(query)}</span>
+      <span style="font-size:11px;color:var(--muted);background:var(--surface);border:0.5px solid var(--border);padding:2px 7px;border-radius:10px;white-space:nowrap">${escHtml(model)}</span>
+    </div>
+    <div class="loading-dots"><span></span><span></span><span></span></div>
+    <div class="answer-text"></div>
+    <div class="sources-section" style="display:none">
+      <div class="sources-title">Sources</div>
+      <div class="source-pills"></div>
+    </div>
+    <div class="screenshots-section" style="display:none">
+      <div class="screenshots-title">📸 Screenshots from source documents</div>
+      <div class="screenshots-grid"></div>
+    </div>
+    <div class="answer-actions" style="display:none">
+      <button class="action-btn" onclick="vote(this,1)">👍 Helpful</button>
+      <button class="action-btn" onclick="vote(this,-1)">👎 Not helpful</button>
+      <button class="action-btn" onclick="copyAnswer(this)">📋 Copy</button>
+    </div>
+    <div class="follow-ups" style="display:none">
+      <div class="follow-up-label">Follow-up suggestions</div>
+      <div class="follow-up-btns"></div>
+    </div>
+  `;
+  return card;
+}
+
+function renderSources(card, sources, confidence) {
+  const sec = card.querySelector('.sources-section');
+  const pills = card.querySelector('.source-pills');
+  if (!sources || sources.length === 0) return;
+  sec.style.display = '';
+  pills.innerHTML = '';
+  sources.forEach(s => {
+    const pct = Math.round((s.score || 0) * 100);
+    const pill = document.createElement('span');
+    pill.className = 'source-pill';
+    pill.innerHTML = `📄 ${escHtml(s.file_name)} <span class="score">${pct}%</span>`;
+    pills.appendChild(pill);
+  });
+
+  // Confidence bar
+  const meta = card.querySelector('.answer-meta');
+  const confWrap = document.createElement('div');
+  confWrap.className = 'confidence-bar-wrap';
+  const pct = Math.round(confidence * 100);
+  confWrap.innerHTML = `
+    <span class="confidence-label">Confidence</span>
+    <div class="confidence-bar">
+      <div class="confidence-fill" style="width:${pct}%;background:${confColor(pct)}"></div>
+    </div>
+    <span class="confidence-label">${pct}%</span>
+  `;
+  meta.appendChild(confWrap);
+}
+
+function renderImages(card, images) {
+  if (!images || images.length === 0) return;
+  const sec   = card.querySelector('.screenshots-section');
+  const grid  = card.querySelector('.screenshots-grid');
+  sec.style.display = '';
+  grid.innerHTML = '';
+
+  images.forEach(img => {
+    const label = img.page_num
+      ? `${img.file_name} — p.${img.page_num}`
+      : img.file_name;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'screenshot-thumb';
+    wrap.title = label;
+    wrap.innerHTML = `
+      <img src="${img.url}" alt="${escHtml(label)}" loading="lazy"
+           onerror="this.closest('.screenshot-thumb').style.display='none'"/>
+      <div class="screenshot-label">${escHtml(label)}</div>
+    `;
+    wrap.addEventListener('click', () => openLightbox(img.url, label));
+    grid.appendChild(wrap);
+  });
+}
+
+function openLightbox(url, caption) {
+  // Remove any existing lightbox
+  document.querySelector('.lightbox-overlay')?.remove();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'lightbox-overlay';
+  overlay.innerHTML = `
+    <button class="lightbox-close" title="Close">✕</button>
+    <img src="${url}" alt="${escHtml(caption)}"/>
+    <div class="lightbox-caption">${escHtml(caption)}</div>
+  `;
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay || e.target.classList.contains('lightbox-close'))
+      overlay.remove();
+  });
+  document.body.appendChild(overlay);
+}
+
+function confColor(pct) {
+  if (pct >= 70) return 'var(--green)';
+  if (pct >= 40) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+function addCacheBadge(card) {
+  const meta = card.querySelector('.answer-meta');
+  const b = document.createElement('span');
+  b.className = 'cache-badge';
+  b.textContent = '⚡ Cached';
+  meta.appendChild(b);
+}
+
+function addLatencyBadge(card, ms) {
+  const meta = card.querySelector('.answer-meta');
+  const b = document.createElement('span');
+  b.className = 'latency-badge';
+  b.textContent = `${ms}ms`;
+  meta.appendChild(b);
+}
+
+function renderFollowUps(card, followUps) {
+  if (!followUps || followUps.length === 0) return;
+  const wrap = card.querySelector('.follow-ups');
+  const btns = card.querySelector('.follow-up-btns');
+  wrap.style.display = '';
+  followUps.forEach(fu => {
+    const btn = document.createElement('button');
+    btn.className = 'follow-up-btn';
+    btn.textContent = fu;
+    btn.onclick = () => {
+      document.getElementById('query-input').value = fu;
+      submitQuery();
+    };
+    btns.appendChild(btn);
+  });
+}
+
+function finalise(card) {
+  card.querySelector('.loading-dots')?.remove();
+  card.querySelector('.answer-actions').style.display = '';
+  const fu = card.querySelector('.follow-ups');
+  if (fu && fu.querySelector('.follow-up-btn')) fu.style.display = '';
+  refreshStrip();
+}
+
+function showError(card, msg) {
+  card.querySelector('.loading-dots')?.remove();
+  const t = card.querySelector('.answer-text');
+  t.textContent = '⚠ ' + msg;
+  t.style.color = 'var(--muted)';
+}
+
+function vote(btn, v) {
+  btn.classList.add('voted');
+  showToast(v === 1 ? 'Thanks for the feedback! 👍' : 'Feedback noted — we\'ll improve.');
+}
+
+function copyAnswer(btn) {
+  const text = btn.closest('.answer-card').querySelector('.answer-text').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard'));
+}
+
+// ── Documents ──────────────────────────────────────────────────────────────
+let allDocs = [];
+let kbView = 'linear'; // 'linear' | 'folder'
+
+function setKbView(v) {
+  kbView = v;
+  document.getElementById('view-linear-btn').classList.toggle('active', v === 'linear');
+  document.getElementById('view-folder-btn').classList.toggle('active', v === 'folder');
+  document.getElementById('doc-table').style.display = v === 'linear' ? '' : 'none';
+  document.getElementById('folder-view').style.display = v === 'folder' ? '' : 'none';
+  const q = document.getElementById('kb-search').value.toLowerCase();
+  const filtered = q ? allDocs.filter(d => d.file_name.toLowerCase().includes(q)) : allDocs;
+  if (v === 'linear') renderDocTable(filtered);
+  else renderFolderView(filtered);
+}
+
+async function loadDocuments() {
+  const tbody = document.getElementById('doc-tbody');
+  tbody.innerHTML = '<tr><td colspan="7" style="color:var(--muted);padding:1rem">Loading…</td></tr>';
+  try {
+    const res = await fetch(`${API}/api/documents`);
+    const data = await res.json();
+    allDocs = data.documents || [];
+    if (kbView === 'linear') renderDocTable(allDocs);
+    else renderFolderView(allDocs);
+    document.getElementById('brd-count').textContent = allDocs.filter(d=>d.folder==='BRDs').length;
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="7" style="color:var(--muted);padding:1rem">Failed to load.</td></tr>';
+  }
+}
+
+function renderDocTable(docs) {
+  const tbody = document.getElementById('doc-tbody');
+  if (docs.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="color:var(--muted);padding:1rem">No documents yet. Upload some files to get started.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = docs.map(d => `
+    <tr>
+      <td style="font-weight:500">${escHtml(d.file_name)}</td>
+      <td><span class="file-type-badge type-${d.file_type}">${d.file_type.toUpperCase()}</span></td>
+      <td>${escHtml(d.folder)}</td>
+      <td>${d.page_count}</td>
+      <td>v${d.version_id}</td>
+      <td>${fmtDate(d.updated_at)}</td>
+      <td><button class="del-btn" onclick="deleteDoc('${d.doc_id}')">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+function renderFolderView(docs) {
+  const container = document.getElementById('folder-view');
+  if (docs.length === 0) {
+    container.innerHTML = '<div style="color:var(--muted);padding:1rem">No documents yet.</div>';
+    return;
+  }
+  // Group by folder, then by subfolder within file_name (e.g. "ProjectA/doc.pdf")
+  const groups = {};
+  docs.forEach(d => {
+    const topFolder = d.folder || 'BRDs';
+    const parts = d.file_name.replace(/\\/g, '/').split('/');
+    const subFolder = parts.length > 1 ? parts.slice(0, -1).join('/') : '';
+    const groupKey = subFolder ? `${topFolder}/${subFolder}` : topFolder;
+    if (!groups[groupKey]) groups[groupKey] = [];
+    groups[groupKey].push(d);
+  });
+  const folderIds = {};
+  let idCounter = 0;
+  container.innerHTML = Object.entries(groups).map(([groupKey, groupDocs]) => {
+    const fid = 'fg-' + (idCounter++);
+    folderIds[fid] = true;
+    return `
+      <div class="folder-group">
+        <div class="folder-row" onclick="toggleFolder('${fid}')">
+          <span class="folder-arrow" id="${fid}-arrow">▶</span>
+          <span class="folder-icon">📁</span>
+          <span class="folder-name">${escHtml(groupKey)}</span>
+          <span class="folder-count">${groupDocs.length} file${groupDocs.length !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="folder-children" id="${fid}-children">
+          ${groupDocs.map(d => {
+            const baseName = d.file_name.replace(/\\/g, '/').split('/').pop();
+            return `
+            <div class="folder-doc-row">
+              <span class="file-type-badge type-${d.file_type}" style="font-size:10px">${d.file_type.toUpperCase()}</span>
+              <span class="folder-doc-name" title="${escHtml(d.file_name)}">${escHtml(baseName)}</span>
+              <span class="folder-doc-meta">${d.page_count}p · v${d.version_id} · ${fmtDate(d.updated_at)}</span>
+              <button class="del-btn" onclick="deleteDoc('${d.doc_id}')">Delete</button>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleFolder(fid) {
+  const children = document.getElementById(fid + '-children');
+  const arrow = document.getElementById(fid + '-arrow');
+  const isOpen = children.classList.contains('open');
+  children.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+function filterDocs() {
+  const q = document.getElementById('kb-search').value.toLowerCase();
+  const filtered = q ? allDocs.filter(d => d.file_name.toLowerCase().includes(q)) : allDocs;
+  if (kbView === 'linear') renderDocTable(filtered);
+  else renderFolderView(filtered);
+}
+
+async function deleteDoc(docId) {
+  if (!confirm('Delete this document from the knowledge base?')) return;
+  await fetch(`${API}/api/documents/${docId}`, { method: 'DELETE' });
+  showToast('Document deleted');
+  loadDocuments();
+}
+
+// ── Upload ─────────────────────────────────────────────────────────────────
+let pendingFiles = [];
+
+function filesSelected(e) {
+  addFiles(Array.from(e.target.files));
+}
+function dragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag-over'); }
+function dragLeave(e) { document.getElementById('drop-zone').classList.remove('drag-over'); }
+function dropFiles(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag-over');
+  addFiles(Array.from(e.dataTransfer.files));
+}
+function addFiles(files) {
+  pendingFiles.push(...files);
+  renderQueue();
+}
+function renderQueue() {
+  const wrap = document.getElementById('upload-queue');
+  const items = document.getElementById('upload-queue-items');
+  document.getElementById('upload-btn').disabled = pendingFiles.length === 0;
+  if (pendingFiles.length === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  items.innerHTML = pendingFiles.map((f,i) => `
+    <div class="upload-item">
+      <span class="fname">${escHtml(f.name)}</span>
+      <span class="fsize">${fmtSize(f.size)}</span>
+      <span class="upload-status queued" id="ustat-${i}">Queued</span>
+    </div>
+  `).join('');
+}
+function clearQueue() { pendingFiles = []; renderQueue(); }
+
+async function uploadFiles() {
+  if (pendingFiles.length === 0) return;
+  document.getElementById('upload-btn').disabled = true;
+  const fd = new FormData();
+  pendingFiles.forEach(f => fd.append('files', f));
+  fd.append('folder', 'BRDs');
+  try {
+    const res = await fetch(`${API}/api/upload`, { method: 'POST', body: fd });
+    const data = await res.json();
+    data.uploaded.forEach((u, i) => {
+      const el = document.getElementById('ustat-' + i);
+      if (el) el.className = 'upload-status done';
+      if (el) el.textContent = u.status === 'queued' ? 'Ingesting…' : 'Done';
+    });
+    showToast(`${pendingFiles.length} file(s) queued for ingestion`);
+    setTimeout(() => { pendingFiles = []; renderQueue(); }, 3000);
+  } catch(e) {
+    showToast('Upload failed: ' + e.message);
+    document.getElementById('upload-btn').disabled = false;
+  }
+}
+
+async function rescanFolder() {
+  await fetch(`${API}/api/ingest/folder`, { method: 'POST' });
+  showToast('BRDs folder re-scan triggered');
+}
+
+// ── Analytics ──────────────────────────────────────────────────────────────
+async function loadAnalytics() {
+  try {
+    const res = await fetch(`${API}/api/analytics`);
+    const d = await res.json();
+    document.getElementById('a-docs').textContent    = d.total_docs;
+    document.getElementById('a-chunks').textContent  = d.total_chunks;
+    document.getElementById('a-queries').textContent = d.total_queries;
+    document.getElementById('a-cache').textContent   = pct(d.cache_hit_rate);
+    document.getElementById('a-conf').textContent    = pct(d.avg_confidence);
+    document.getElementById('a-lat').textContent     = d.avg_latency_ms + 'ms';
+
+    const tq = document.getElementById('top-queries-list');
+    if (d.top_queries && d.top_queries.length > 0) {
+      tq.innerHTML = d.top_queries.map(q => `
+        <div class="top-query-row">
+          ${escHtml(q.query_text)}
+          <span class="top-query-cnt">${q.cnt}×</span>
+        </div>
+      `).join('');
+    }
+  } catch(e) {}
+}
+
+// ── Health + strip refresh ─────────────────────────────────────────────────
+async function refreshStrip() {
+  try {
+    const [health, analytics] = await Promise.all([
+      fetch(`${API}/api/health`).then(r=>r.json()),
+      fetch(`${API}/api/analytics`).then(r=>r.json()),
+    ]);
+    document.getElementById('strip-docs').textContent    = analytics.total_docs;
+    document.getElementById('strip-chunks').textContent  = analytics.total_chunks;
+    document.getElementById('strip-vectors').textContent = health.vector_count;
+    document.getElementById('strip-cache').textContent   = pct(analytics.cache?.hit_rate || 0);
+    document.getElementById('ss-docs').textContent       = analytics.total_docs;
+    document.getElementById('ss-chunks').textContent     = analytics.total_chunks;
+    document.getElementById('ss-queries').textContent    = analytics.total_queries;
+    document.getElementById('ss-cache').textContent      = pct(analytics.cache?.hit_rate || 0);
+    document.getElementById('brd-count').textContent     = analytics.total_docs;
+    document.getElementById('status-dot').className      = 'status-dot ok';
+    document.getElementById('status-text').textContent   = 'Connected';
+  } catch(e) {
+    document.getElementById('status-dot').className  = 'status-dot';
+    document.getElementById('status-text').textContent = 'Offline';
+  }
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function fmtDate(iso) {
+  if (!iso) return '–';
+  return iso.split('T')[0];
+}
+function fmtSize(bytes) {
+  if (bytes < 1024) return bytes + 'B';
+  if (bytes < 1048576) return (bytes/1024).toFixed(1) + 'KB';
+  return (bytes/1048576).toFixed(1) + 'MB';
+}
+function pct(v) { return Math.round((v||0)*100) + '%'; }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── History toggle ────────────────────────────────────────────────────────
+function toggleHistory(cb) {
+  const lbl = document.getElementById('s-history-label');
+  if (cb.checked) {
+    lbl.textContent = 'ON — all queries are recorded';
+    lbl.style.color = 'var(--green-dark)';
+    const badge = document.getElementById('hist-enabled-badge');
+    if (badge) { badge.textContent = '● Recording ON'; badge.style.background = 'var(--green-bg)'; badge.style.color = 'var(--green-dark)'; }
+    showToast('History recording enabled (restart server to apply)');
+  } else {
+    lbl.textContent = 'OFF — queries will not be saved';
+    lbl.style.color = 'var(--muted)';
+    const badge = document.getElementById('hist-enabled-badge');
+    if (badge) { badge.textContent = '○ Recording OFF'; badge.style.background = 'var(--bg)'; badge.style.color = 'var(--muted)'; }
+    showToast('History recording disabled (restart server to apply)');
+  }
+}
+
+// ── History ───────────────────────────────────────────────────────────────
+async function loadHistory() {
+  const filter = document.getElementById('hist-filter')?.value || '';
+  const url = filter ? `${API}/api/history?source_type=${filter}` : `${API}/api/history`;
+  const list = document.getElementById('history-list');
+  list.innerHTML = '<div style="color:var(--muted);font-size:13px">Loading…</div>';
+  try {
+    const res  = await fetch(url);
+    const data = await res.json();
+    const rows = data.history || [];
+    if (rows.length === 0) {
+      list.innerHTML = '<div style="color:var(--muted);font-size:13px">No history yet. Ask a question to start recording.</div>';
+      return;
+    }
+    list.innerHTML = rows.map(r => `
+      <div class="history-card">
+        <div class="history-q">${escHtml(r.question)}</div>
+        <div class="history-a" id="ha-${r.id}">${escHtml(r.answer)}</div>
+        <div class="history-meta">
+          <span class="hbadge source-${r.source_type}">${r.source_type}</span>
+          ${r.is_faq ? '<span class="hbadge is-faq">⭐ FAQ</span>' : ''}
+          <span class="hbadge" style="background:var(--bg);color:var(--muted)">${fmtDate(r.created_at)}</span>
+          ${r.confidence ? `<span class="hbadge" style="background:var(--bg);color:var(--muted)">Conf: ${Math.round(r.confidence*100)}%</span>` : ''}
+          <span class="hbadge" style="background:var(--bg);color:var(--muted)">${r.latency_ms}ms</span>
+        </div>
+        <div class="history-actions">
+          <button class="tiny-btn" onclick="toggleExpand('ha-${r.id}', this)">Show more</button>
+          <button class="tiny-btn" onclick="prefillQuestion(${JSON.stringify(r.question)})">Ask again</button>
+          ${!r.is_faq ? `<button class="tiny-btn promote" onclick="promoteToFAQ(${r.id}, this)">⭐ Add to FAQ</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    list.innerHTML = `<div style="color:var(--muted);font-size:13px">Error loading history: ${e.message}</div>`;
+  }
+}
+
+function toggleExpand(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('expanded');
+  btn.textContent = el.classList.contains('expanded') ? 'Show less' : 'Show more';
+}
+
+function prefillQuestion(q) {
+  document.getElementById('query-input').value = q;
+  switchTab('ask');
+}
+
+async function promoteToFAQ(historyId, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Promoting…';
+  try {
+    const res = await fetch(`${API}/api/faq/promote`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ history_id: historyId }),
+    });
+    const d = await res.json();
+    if (d.faq_id) {
+      showToast('Added to FAQ library ⭐');
+      btn.textContent = '✓ In FAQ';
+      btn.classList.remove('promote');
+    }
+  } catch(e) {
+    btn.textContent = 'Error';
+    showToast('Failed to promote: ' + e.message);
+  }
+}
+
+// ── FAQ ───────────────────────────────────────────────────────────────────
+async function loadFAQs() {
+  const list = document.getElementById('faq-list');
+  list.innerHTML = '<div style="color:var(--muted);font-size:13px">Loading…</div>';
+  try {
+    const res  = await fetch(`${API}/api/faq`);
+    const data = await res.json();
+    const rows = data.faqs || [];
+    if (rows.length === 0) {
+      list.innerHTML = '<div style="color:var(--muted);font-size:13px">No FAQs yet. Promote answers from the History tab.</div>';
+      return;
+    }
+    list.innerHTML = rows.map(r => `
+      <div class="faq-card">
+        <div class="faq-q">⭐ ${escHtml(r.question)}</div>
+        <div class="faq-a">${escHtml(r.answer)}</div>
+        ${r.sources && r.sources.length > 0 ? `<div style="margin-top:.5rem;font-size:11.5px;color:var(--muted)">Sources: ${r.sources.map(s=>`<span style="background:var(--blue-bg);color:var(--blue-dark);padding:1px 7px;border-radius:4px;margin-right:4px">${escHtml(s)}</span>`).join('')}</div>` : ''}
+        <div style="margin-top:.5rem;display:flex;gap:6px;">
+          <button class="tiny-btn" onclick="prefillQuestion(${JSON.stringify(r.question)})">Ask</button>
+          <button class="tiny-btn" style="color:#791F1F" onclick="deleteFAQ(${r.id}, this)">Remove</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    list.innerHTML = `<div style="color:var(--muted);font-size:13px">Error: ${e.message}</div>`;
+  }
+}
+
+async function deleteFAQ(faqId, btn) {
+  if (!confirm('Remove this FAQ?')) return;
+  await fetch(`${API}/api/faq/${faqId}`, { method: 'DELETE' });
+  showToast('FAQ removed');
+  loadFAQs();
+}
+
+// ── Excel Q&A ─────────────────────────────────────────────────────────────
+let xlsFile = null;
+
+function xlsDrop(e) {
+  e.preventDefault();
+  document.getElementById('xls-drop').classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) setXlsFile(f);
+}
+function xlsSelected(e) {
+  const f = e.target.files[0];
+  if (f) setXlsFile(f);
+}
+function setXlsFile(f) {
+  xlsFile = f;
+  const info = document.getElementById('xls-file-info');
+  info.style.display = '';
+  info.innerHTML = `📊 <strong>${escHtml(f.name)}</strong> · ${fmtSize(f.size)}`;
+  document.getElementById('xls-run-btn').disabled = false;
+}
+
+async function runExcelQA() {
+  if (!xlsFile) return;
+  const btn = document.getElementById('xls-run-btn');
+  btn.disabled = true;
+  document.getElementById('xls-progress').style.display = '';
+  document.getElementById('xls-results').style.display = 'none';
+
+  const fd = new FormData();
+  fd.append('file', xlsFile);
+  fd.append('question_col', document.getElementById('xls-qcol').value || 'B');
+  fd.append('answer_col',   document.getElementById('xls-acol').value || 'E');
+  fd.append('mode',         document.getElementById('xls-mode').value  || 'balanced');
+  fd.append('sheet_name',   '0');
+
+  try {
+    const res  = await fetch(`${API}/api/excel-qa`, { method: 'POST', body: fd });
+    const data = await res.json();
+    document.getElementById('xls-progress').style.display = 'none';
+    document.getElementById('xls-results').style.display = '';
+
+    const rows = data.rows || [];
+    document.getElementById('xls-result-rows').innerHTML = rows.map(r => `
+      <div class="excel-result-row">
+        <span class="rnum">R${r.row}</span>
+        <span class="rq">${escHtml(r.question)}</span>
+        <span class="${r.answered ? 'rok' : 'rfail'}">${r.answered ? '✓' : '✗'}</span>
+      </div>
+    `).join('');
+    const answered = rows.filter(r=>r.answered).length;
+    document.getElementById('xls-result-summary').innerHTML =
+      `✅ Done — ${answered}/${rows.length} questions answered. File saved to BRDs folder as <strong>${escHtml(data.output_file || '')}</strong>`;
+    showToast(`Excel Q&A complete: ${answered}/${rows.length} answered`);
+  } catch(e) {
+    document.getElementById('xls-progress').style.display = 'none';
+    showToast('Excel Q&A failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+refreshStrip();
+setInterval(refreshStrip, 15000);
+loadDocuments();
+</script>
+</body>
+</html>

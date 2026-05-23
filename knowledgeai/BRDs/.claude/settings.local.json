@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/sandeep/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/c35cc6f6-0bf2-4a3f-9c7c-70153ea4540c/dc35c6ed-9e63-40e5-8d62-43cf3e461aa4/skills/docx/**)",
+      "Bash(pandoc --track-changes=all \"C:/Users/sandeep/Downloads/CustomerS/knowledgeai/BRDs/HELP_Guide_Draft_1_5_Feb.docx\" -o /tmp/help_guide.md)",
+      "Read(//tmp/**)",
+      "Bash(python scripts/office/unpack.py \"C:/Users/sandeep/Downloads/CustomerS/knowledgeai/BRDs/HELP_Guide_Draft_1_5_Feb.docx\" /tmp/help_unpacked/)",
+      "Bash(where python:*)",
+      "Bash(where py:*)",
+      "Bash(C:/Users/sandeep/AppData/Local/Programs/Python/Python314/python.exe -c \"import os; print\\(os.path.exists\\(''/tmp/help_unpacked/word/document.xml''\\)\\); print\\(os.getcwd\\(\\)\\)\")",
+      "Bash(grep -v '^[[:space:]]*$')",
+      "Read(//c/Users/sandeep/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/c35cc6f6-0bf2-4a3f-9c7c-70153ea4540c/dc35c6ed-9e63-40e5-8d62-43cf3e461aa4/skills/xlsx/**)",
+      "Bash(C:/Users/sandeep/AppData/Local/Programs/Python/Python314/python.exe -c \":*)"
+    ]
+  }
+}

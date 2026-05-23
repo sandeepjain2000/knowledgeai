@@ -1,0 +1,119 @@
+<!-- converted from SMS Segments.docx -->
+
+# Business Requirement Document (BRD)
+### Enhancement: SMS Segmentation Tracking & Accurate Balance Deduction
+
+## 1. Overview
+Our current system integrates with Twilio for sending SMS. Schools purchase an SMS top-up, and the system deducts 1 SMS per message sent, regardless of the actual size of the SMS.
+However, Twilio splits long SMS messages into multiple segments. For example, one long message may be sent as 2 or 3 segments.
+Currently, we do not track segments, resulting in incorrect deduction of SMS balance and incorrect calculation of SMS cost.
+This enhancement aims to ensure accurate tracking of segments and correct deduction of SMS balance and cost.
+
+## 2. Business Problems
+- Incorrect SMS Deduction
+- System always deducts 1 SMS, even when multiple segments are sent.
+- This leads to schools consuming more SMS than their balance implies.
+- Incorrect Accounting / Costing
+- Cost per SMS is ₹0.10.
+- If the message has 2 segments, cost should be ₹0.20 — currently not accounted.
+- No record of actual segments sent
+- We do not store Twilio messageSid, so we cannot fetch the actual segment count.
+- Reports (SMS report, OTP report) are incorrect because only "1 SMS" is shown.
+
+## 3. Business Objectives
+- Accurately track SMS usage based on the actual number of segments sent.
+- Update SMS balance logic to deduct number of segments, not number of messages.
+- Show correct SMS usage and segment count in:
+- SMS Report
+- OTP Report
+- All modules using SMS (Shop, CHY, Permission form, etc.)
+- Increase accuracy of customer billing and prevent overuse of unbilled SMS.
+
+## 4. Proposed Solution
+### 4.1 Store Twilio messageSid
+Whenever an SMS or OTP is sent:
+- Store the following details in DB:
+- message_sid
+- num_segemnts
+- sms_cost (from twilio)
+- sms_status (from twilio)
+### 4.2 Fetch SMS Segment Count
+Using Twilio API and messageSid:
+- Retrieve the field num_segments.
+- Save the segment count in DB.
+### 4.3 Deduct SMS Balance Based on Segments
+New logic:
+remaining_sms = remaining_sms - num_segments
+Example:
+- Message sent = 2 segments
+- Cost per segment = 0.10
+- Deduction = 2 SMS
+- Cost = 0.20
+### 4.4 Update Cost Calculations
+Any module displaying SMS cost must calculate:
+sms_cost = num_segments * cost_per_sms
+### 4.5 Update Reports
+SMS Report:
+- Show total segments sent
+- Show cost = segments × 0.10
+- Show messageSid
+OTP Report:
+- Show segment count per OTP
+- Show cost based on segments
+Other Modules:
+- Shop SMS notifications
+- CHY notifications
+- Permission form SMS
+- Any other SMS-triggered module
+All must show:
+- Segment count
+- Correct cost
+- Deduct balance accurately
+
+## 5. System Changes Required
+### 5.1 Database Changes
+Add fields:
+- message_sid (varchar)
+- num_segments (int)
+- Sms_cost
+### 5.2 Backend Logic Changes
+- Modify SMS sending service:
+- Store message_sid after sending.
+- Add Twilio API call to fetch delivered segment count.
+- Update SMS balance deduction logic.
+- Apply new deduction rules on all SMS-sending modules.
+### 5.3 Reporting Changes
+- Add "Segments Sent" column
+- Add "Cost" column
+- Update summary totals accordingly
+### 5.4 Handling Existing Data
+- Old SMS already sent will not have segment data.
+- They will be default as 1 segment.
+
+## 6. Edge Cases & Considerations
+- If Twilio segment API fails
+- Retry with cron job
+- Do not deduct SMS until segment count is confirmed.
+- Long Unicode messages
+- These can be sent in more segments — ensure correct calculation.
+- School with low balance
+- If insufficient balance for required segments:
+- Either block sending
+- Or send first & show negative balance (depends on current system design)
+- Top-up accounting
+- Balance will now reduce faster due to accurate segment deduction.
+- No change needed in purchase flow.
+
+## 7. Benefits
+### For Schools
+- Accurate SMS balance consumption
+- Clear, transparent billing
+- Trust in system accuracy
+### For System
+- Prevent revenue loss
+- Improve reporting accuracy
+- Align with Twilio billing standards
+SMS Report:
+
+
+OTP Report:

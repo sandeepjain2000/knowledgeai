@@ -1,0 +1,189 @@
+
+Additional Real-World Use Cases & Edge Cases
+
+Parent Communication Issues
+- Parent submits PTL but enters wrong pickup time
+- Parent submits PTL for wrong child
+- Divorced parents submit conflicting attendance instructions
+- One parent approves leave while another disputes it
+- Parent submits note from unregistered email
+- Parent claims they submitted note but system has no record
+- Parent submits note in another language
+- Parent submits vague reason like “personal”
+- Parent accidentally submits duplicate PTLs
+- Parent submits PTL for yesterday instead of today
+- Parent updates PTL after student already left
+- Parent cancels PTL but student already signed out
+- Parent sends verbal instruction via phone only
+- Parent sends screenshot instead of proper submission
+- Parent internet outage prevents submission
+- Parent believes approval means automatic sign-out
+- Parent assumes class teacher approval is sufficient
+- Parent expects office to sign student out automatically
+- Parent disputes DSI timestamp accuracy
+- Parent says child was present despite absence SMS
+- Parent receives duplicate notifications
+- Parent never receives notification due to spam filter
+- Parent changes phone number but system not updated
+- Parent claims notification timing was delayed
+- Parent receives sibling’s attendance notification
+- Parent intentionally submits misleading reason
+- Parent submits PTL while student is already absent at home
+- Parent submits absence note but later drops child to school
+- Parent submits late note but child never leaves home
+
+Student Behaviour Scenarios
+- Student signs in using friend’s identity
+- Student signs out another student
+- Student intentionally bypasses DSI
+- Student leaves campus through alternate gate
+- Student returns without DSI Returning
+- Student signs out but remains on campus
+- Student signs in late then leaves immediately
+- Student repeatedly signs in/out to manipulate records
+- Student forgets to complete sign-in process
+- Student walks away mid-DSI transaction
+- Student selects wrong attendance reason
+- Student uses wrong year/class selection
+- Student intentionally signs in late to avoid class
+- Student signs in early but skips class
+- Student signs out during lunch and never returns
+- Student claims DSI machine was broken
+- Student signs out for PTL then attends sports activity
+- Student arrives during class change causing timing ambiguity
+- Student signs in after roll but before attendance sync
+- Student signs in while office manually edits attendance
+- Student signs in twice accidentally
+- Student signs out twice accidentally
+- Student signs out then immediately signs back in
+- Student leaves with sibling without separate PTL
+- Student claims teacher gave verbal permission only
+- Student uses office bypass due to embarrassment/anxiety
+- Student deliberately creates queue congestion at DSI
+- Student signs in while suspended
+- Student on restricted movement list attempts PTL
+- Student refuses to use DSI
+- Student signs in after school day technically ended
+
+Staff Operational Edge Cases
+- Staff approve PTL without verifying parent identity
+- Staff manually override DSI timestamps
+- Staff forget to process Please Checks
+- Staff accidentally approve duplicate PTLs
+- Staff edit attendance after integration sync
+- Staff mark present while DSI shows absent
+- Staff bulk approve incorrect requests
+- Staff approve PTL for suspended student
+- Staff forget to close anomaly case
+- Staff create manual late while DSI already recorded late
+- Staff mark excursion incorrectly as absence
+- Staff process attendance during internet outage
+- Staff use shared office credentials
+- Staff accidentally sign out wrong student
+- Staff process retrospective attendance changes days later
+- Staff ignore unresolved pending late notes
+- Staff manually remove attendance history
+- Staff approve PTL outside allowed hours
+- Staff forget to reconcile returned students
+- Staff bypass approval workflow during emergencies
+
+DSI Hardware / Technical Failures
+- DSI kiosk offline during peak arrival
+- Touchscreen partially responsive
+- Barcode scanner intermittently failing
+- Camera/photo verification unavailable
+- Printer for late slips out of paper
+- DSI clock incorrect by several minutes
+- DSI timezone misconfigured
+- Network latency delays attendance write-back
+- DSI sync backlog after outage
+- Student transaction partially saved
+- Duplicate DSI submissions from retry
+- Kiosk power failure during sign-out
+- Battery backup failure
+- Student record cached incorrectly
+- DSI device disconnected from attendance system
+
+Integration & Sync Scenarios
+- Tyro marks student absent before DSI late sync arrives
+- VSware delay creates duplicate absence alerts
+- Compass manual correction overwritten by sync
+- Write-back succeeds for some students but fails others
+- Attendance system unavailable during reconciliation
+- API timeout causes partial PTL creation
+- Student deleted in SIS but still exists in DSI cache
+- Class roll changes not synced yet
+- Student transferred houses/classes midday
+- Integration sends duplicate notifications
+
+Timing & Schedule Complexities
+- Student arrives exactly at roll cutoff boundary
+- Student signs out seconds before approved PTL window
+- Student returns after school officially ends
+- Overnight boarder leave overlaps school day
+- Daylight savings time change affects timestamps
+- Half-day schedules create incorrect late thresholds
+- Special assembly changes attendance timing
+- Exam timetable differs from normal attendance windows
+- Sports day has alternative attendance structure
+- Holiday mistakenly configured as school day
+
+Safety / Emergency / Compliance Scenarios
+- Fire drill during sign-out process
+- Emergency evacuation while students off-campus
+- Lockdown initiated while PTL pending
+- Student medically unfit but marked present
+- Missing student investigation with incorrect DSI logs
+- Student leaves with unauthorized adult
+- Court order restricts pickup permissions
+- Custody restriction conflicts with PTL request
+- Student welfare alert attached to attendance
+- Government audit requests attendance evidence
+
+Boarding School / Residential Edge Cases
+- Boarder signs out from hostel but not school
+- Boarder returns after curfew
+- Overnight leave overlaps weekday attendance
+- Boarder marked present in class while off-campus
+- Hostel roll and school roll disagree
+- Weekend leave not reconciled Monday morning
+- Boarder stays with another family unexpectedly
+- Boarder leaves campus without academic absence
+- Boarding parent and academic parent differ
+- International boarder communication delays
+
+Hypothetical / Extreme Scenarios
+- AI-generated fake parent email requests PTL
+- Deepfake phone call authorizes pickup
+- Student hacks kiosk timing
+- QR-code replay attack on DSI
+- Mass duplicate notifications due to loop bug
+- Attendance records corrupted after database restore
+- Entire school network offline for full day
+- Multiple attendance systems active simultaneously
+- Biometric mismatch for injured student
+- Student deliberately manipulates timezone on device
+
+Reporting / Analytics / Audit Edge Cases
+- Attendance percentages differ across systems
+- Historical PTL edits alter compliance reports
+- Government export excludes late-return events
+- Duplicate student records inflate absences
+- Archived attendance restored incorrectly
+- Staff export sensitive attendance notes accidentally
+- Deleted attendance still appears in analytics
+- Late converted to absence after cutoff
+- Attendance reports generated during live sync
+- Compliance dashboard ignores manual overrides
+
+Human Process & Communication Breakdowns
+- Teacher assumes office processed attendance
+- Office assumes teacher updated roll
+- Parent assumes approval notification means completed departure
+- Student assumes verbal permission overrides system
+- Staff misunderstand difference between PTL and absence
+- Different campuses follow different attendance rules
+- Staff trained on old workflow
+- Policy changes not reflected in app wording
+- Parents misunderstand “pending” vs “approved”
+- Attendance terminology differs across systems

@@ -1,0 +1,85 @@
+
+
+PARENT QUERY TO SCHOOL
+This email address is for support in relation to technical issues with the school App, if you are emailing the school with a question you will need to contact the school directly.  You can do this by using the Parent Note option in the App or directly via email/phone.
+
+ATTENDANCE - Absence/Late Note/Permission to Leave
+Attendance notes (absentee, late notes and permission to leave notes)  cannot be accepted into this email address and you will need to submit your note via the School App or contact the school directly.
+
+VSWARE / TYRO
+Unique Schools provide a browser login to your VSware / Tyro ccount through the school App.  VSware/Tyro is a wholly separate company to Unique Schools.  If you are having problems accessing or viewing your VSWare/Tyro account please review the common issues below:
+
+“VSWare Login”
+If your username is not automatically appearing on the VSware login page in the School App then Unique Schools do not have this information. You will need to contact the school office and ask them to send your VSware username to you directly through the VSware platform which is normally SMS.  Once you receive your username you can then populate into the VSware login page in the School App browser  At the top right hand corner of the VSware login page in the School App there is a HELP GUIDE to assist you in resetting your password and logging into VSware.
+
+“Tyro - no username”
+Tyro is a separate system to the App, and we do not have access to it as it is just a link in the App
+
+“VSWare Locked Out”
+You will need to contact the school office and ask them to unlock your VSWare account.
+
+“VSWare OTP verification code not received”
+VSWare OTP codes can take up to 24 hours to arrive, if you still haven’t received it you should contact the school directly and they will contact VSWare.
+
+“VSware showing blank screen”
+If you see a blank screen when you login to VSWare please click on the VSWare icon in the upper left hand corner of the screen, this should refresh VSWare and display your students.
+
+“VSWare accounts for students who are in separate schools”
+You will see your student listed in the relevant School App for each of the schools which you have children attending.  You cannot login to another schools VSWare system if you are not in that schools App.
+
+REGISTRATION ISSUES
+“Your number is not in the system”
+If you have received a pop up message during the registration process which states “The mobile number you are trying to register with could not be found in the schools database” this means the information provided to Unique School by the school did not include the mobile number you are trying to register with.  You may have provided a different mobile number OR not provided any mobile number to the school.
+
+Unique Schools do not have any authority to directly amend/update/input any data into the schools systems.
+
+You must contact the school office and ask them to check the mobile number in your student record in the Unique School App system and update/input the number which you are using.
+
+“Number taken”
+If you have received a pop up message during the registration process which states “The mobile number is already taken” this means that you have already registered with Unique Schools through another school app.  You do not need to register again.  You can simply login using the registered email address and password that you have used for the other school app.  If you have forgotten your password you should use the Forgot Password option.
+
+“Email address already registered”
+If you have received a pop up message during the registration process which states “The email address is already registered” this means that you have previously registered an account in our system, the initial account registered may have been for a another of our schools.  You should not register again and login using your registered email address and password, if you have forgotten your password you should use the Forgot Password option.
+
+LOGIN ISSUES
+“Change email address”
+If you wish to change your existing registered email address in the App you will need to do this yourself as we cannot change email addresses.  Login to the App using the email address you registered using, then click on your profile name, in your profile choose Change Email ID.
+
+“Change phone number”
+If you wish to change your existing registered phone number in the App you must contact the school office and ask them to check the mobile number in your student record in the Unique School App system and update the number which you are using.  Once the school have confirmed that the new phone number is in the App database you should go to your Profile (click on your name at the top of the side menu) and then choose Change Contact Number.
+
+“Forgot Password”
+If you have forgotten the password you set up during registration for access to the App, please use the Forgot Password option on the login screen to reset your password.
+
+“PIN number”
+If you have forgotten your PIN number for the school App you can disable it or create a new PIN.
+
+Tap on your name at the top of the Side Menu to go to your App Profile
+Scroll to the bottom where it says ‘change 4 digit pin code’
+Choose Disable PIN to remove your PIN - or -
+Enter your new PIN, and confirm your password
+Press ‘submit’
+
+PAYMENTS ISSUES
+“Failed EMI transaction”
+If you have received an automatic response for a shop item you have setup with Instalments this means the latest payment attempt was declined by your bank, this could be due to many reasons. As the payment attempt was declined our system automatically sends you an email to alert you to this in case it is due to a card expiry.
+Our system will attempt to take payment again another 3 times over the next 5 business days and if this is successful you do not need to do anything further.
+
+“Add multiple items to your basket”
+Click directly on the Shop menu on the sidebar rather than use Attention Please dashboard and  you will see all of the items due for payment.  Once you add an item you then go back to the payments outstanding list and select the next item, continue on until all items which you wish to pay for are added, then you should checkout and all items will be in your cart.
+
+“Cannot see items in shop”
+The school may not have added your profile to the shop item, please contact the school directly and ask them to add your profile, you should then be able to refresh the App and see the items in the Shop.
+
+“Do not want to be shown items in your shop list”
+If you do wish to have an item removed from the list of items displayed in your shop menu you should contact the school directly and ask them to remove your profile from that item.
+
+EASYPAYMENTS
+We do not have access to Easypayments. Easypayments is just a link in our app. You need to contact Easypayments or the School directly and they will help you with your query.
+
+APP PROFILE ISSUES
+“Name incorrectly spelled”
+If you or your child’s name is incorrectly spelled in your App profile You must contact the school office and ask them to correct the spelling in your student record in the Unique School App system.
+
+“Cannot see all of your students in the App”
+If you cannot see all of your students who currently attend the school you must contact the school office and ask them to check the student records in the Unique School App system and update/input the number which you are using.
